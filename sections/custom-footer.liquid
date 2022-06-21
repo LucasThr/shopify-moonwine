@@ -1,91 +1,89 @@
-<footer class="">
-  <div class="bg-red-500">
-    {%- if section.blocks.size > 0 -%}
-      <div class="mx-6 max-w-content py-6">
-        <div class="flex justify-between">
-          <div>Moonwine</div>
-          <div class="flex">
-            {%- for block in section.blocks -%}
-              <div class="px-10">
-                {%- if block.settings.heading != blank -%}
-                  <h2 class="footer-block__heading">
-                    {{- block.settings.heading | escape -}}
-                  </h2>
-                {%- endif -%}
-                {%- case block.type -%}
-                  {%- when 'link_list' -%}
-                    {%- if block.settings.menu != blank -%}
-                      <ul class="flex flex-col">
-                        {%- for link in block.settings.menu.links -%}
-                          <li>
-                            <a href="{{ link.url }}" class="">
-                              {{ link.title }}
-                            </a>
-                          </li>
-                          <li>
-                            <a href="{{ link.url }}" class="">
-                              {{ link.title }}
-                            </a>
-                          </li>
-                        {%- endfor -%}
-                      </ul>
-                    {%- endif -%}
-                {%- endcase -%}
-              </div>
-            {%- endfor -%}
-          </div>
+<footer class="bg-red">
+  <div class=" mx-auto max-w-content text-white ">
+    <div class="mx-6   py-6">
+      <div class="flex justify-between">
+        <div>
+          <img src="{{ 'moonwine-logo.png' | asset_img_url: '1920x' }}" alt="Vignes de fonds" width="60" height="60" loading="lazy" class="h-20 w-auto"/>
+          <address class="flex flex-col py-2">
+            <span>11 rue Eugène d’Hallendre</span>
+            <span>59110 LA MADELEINE</span>
+          </address>
+        </div>
+        <div class="flex">
+          {%- for block in section.blocks -%}
+            <div class="px-10">
+              {%- if block.settings.heading != blank -%}
+                <h2 class="footer-block__heading">
+                  {{- block.settings.heading | escape -}}
+                </h2>
+              {%- endif -%}
+              {%- case block.type -%}
+                {%- when 'link_list' -%}
+                  {%- if block.settings.menu != blank -%}
+                    <ul class="flex flex-col">
+                      {%- for link in block.settings.menu.links -%}
+                        <li>
+                          <a href="{{ link.url }}" class="">
+                            {{ link.title }}
+                          </a>
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  {%- endif -%}
+              {%- endcase -%}
+            </div>
+          {%- endfor -%}
         </div>
       </div>
-    {%- endif -%}
+    </div>
 
-    <div class="max-w-content flex justify-between mx-6 border-t-2 text-white border-white
-                                                                        py-6">
+    <div class=" flex justify-between mx-6 border-t text-white border-white py-6">
       <div class="">
         <ul class="flex">
           {%- if section.settings.link_cgv == blank -%}
-            <li class="md:mr-6">
+            <li class="md:mr-12">
               <a href="{{ section.settings.link_cgv }}" class="">
                 <span class="">Mentions Légales et CGV</span>
               </a>
             </li>
           {%- endif -%}
           {%- if section.settings.link_cgv == blank -%}
-            <li class="md:mr-6">
+            <li class="md:mr-12">
               <a href="{{ section.settings.link_cgv }}" class="">
-                <span class="">Mentions Légales et CGV</span>
+                <span class="">Politique de confidentialité</span>
               </a>
             </li>
           {%- endif -%}
           {%- if section.settings.link_cgv == blank -%}
-            <li class="md:mr-6">
+            <li class="md:mr-12">
               <a href="{{ section.settings.link_cgv }}" class="">
-                <span class="">Mentions Légales et CGV
+                <span class="">Préférences cookies
                 </span>
               </a>
             </li>
           {%- endif -%}
         </ul>
       </div>
-      <div class="">
+      <div class="mb-6">
         <ul class="flex justify-end" role="list">
           {%- if settings.social_instagram_link == blank -%}
-            <li class="pl-6">
+            <li class="pl-10">
               <a href="{{ settings.social_instagram_link }}" class="h-10 w-10">
-                Insta
+                <img src="{{ 'custom-insta.png' | asset_img_url: '1920x' }}" alt="Vignes de fonds" width="20" height="20" loading="lazy" class="h-12 w-12"/>
               </a>
             </li>
           {%- endif -%}
           {%- if settings.social_youtube_link == blank -%}
-            <li class="pl-6">
-              <a href="{{ settings.social_youtube_link }}" class="">
-                Youtube
+            <li class="pl-10">
+              <a href="{{ settings.social_instagram_link }}" class="h-10 w-10">
+                <img src="{{ 'custom-youtube.png' | asset_img_url: '1920x' }}" alt="Vignes de fonds" width="20" height="20" loading="lazy" class="h-12 w-auto"/>
               </a>
             </li>
           {%- endif -%}
-          {%- if settings.social_facebook_link != blank -%}
-            <li class="pl-6">
-              <a href="{{ settings.social_facebook_link }}" class="">
-                Facebook
+          {%- if settings.social_facebook_link == blank -%}
+            <li class="pl-10">
+              <a href="{{ settings.social_instagram_link }}" class="h-10 w-10">
+                <img src="{{ 'custom-facebook.png' | asset_img_url: '1920x' }}" alt="Vignes de fonds" width="20" height="20" loading="lazy" class="h-12 w-auto"/>
               </a>
             </li>
           {%- endif -%}
@@ -94,14 +92,13 @@
     </div>
   </div>
   <div class="">
-    <div class="bg-red-200 py-6">
+    <div class="bg-green-light py-6">
       <p class="max-w-content mx-auto text-center">
-        {{ section.settings.text_warning }}
-        Warning
+        L’abus d’alcool est dangereux pour la santé. A consommer avec modération.
       </p>
     </div>
-    <div class="py-6 flex justify-center">
-      Image
+    <div class="py-6 bg-white flex justify-center">
+      <img src="{{ 'custom-alcohol-warning.png' | asset_img_url: '1420x' }}" alt="Restriction alcool pour mineur" width="1420" height="965" loading="lazy" class="md:w-1/2"/>
     </div>
   </div>
 </footer>
@@ -126,22 +123,6 @@
           "default": "footer",
           "label": "t:sections.footer.blocks.link_list.settings.menu.label",
           "info": "t:sections.footer.blocks.link_list.settings.menu.info"
-        }
-      ]
-    }, {
-      "type": "link_list",
-      "name": "t:sections.footer.blocks.text.name",
-      "settings": [
-        {
-          "type": "text",
-          "id": "heading",
-          "default": "Heading",
-          "label": "t:sections.footer.blocks.text.settings.heading.label"
-        }, {
-          "type": "richtext",
-          "id": "subtext",
-          "default": "<p>Share contact information, store details, and brand content with your customers.</p>",
-          "label": "t:sections.footer.blocks.text.settings.subtext.label"
         }
       ]
     }
