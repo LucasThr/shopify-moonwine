@@ -1,4 +1,4 @@
-<div id="parallax-title" class="absolute inset-x-0 top-[25%] -translate-y-1/2">
+<div id="parallax-title" class="absolute inset-x-0 top-[40%] -translate-y-1/2">
   <h2 class="max-w-[1000px] mx-auto text-[80px] text-white text-center font-serif">{{ section.settings.title | escape }}</h2>
 </div>
 <img
@@ -26,10 +26,9 @@
   class="absolute right-0 bottom-0 w-[65%]"
 />
 
-
 {% javascript %}
 window.addEventListener('scroll', () => {
-  document.getElementById('parallax-title').style.top = `${ parseFloat(25 + (window.scrollY / 10)) }%`
+  document.getElementById('parallax-title').style.top = `${ parseFloat(40 + (window.scrollY / 30)) }%`
 })
 {% endjavascript %}
 
