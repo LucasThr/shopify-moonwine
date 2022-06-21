@@ -1,12 +1,168 @@
+<footer class="">
+  <div class="bg-red-500">
+    {%- if section.blocks.size > 0 -%}
+      <div class="mx-6 max-w-content py-6">
+        <div class="flex justify-between">
+          <div>Moonwine</div>
+          <div class="flex">
+            {%- for block in section.blocks -%}
+              <div class="px-10">
+                {%- if block.settings.heading != blank -%}
+                  <h2 class="footer-block__heading">
+                    {{- block.settings.heading | escape -}}
+                  </h2>
+                {%- endif -%}
+                {%- case block.type -%}
+                  {%- when 'link_list' -%}
+                    {%- if block.settings.menu != blank -%}
+                      <ul class="flex flex-col">
+                        {%- for link in block.settings.menu.links -%}
+                          <li>
+                            <a href="{{ link.url }}" class="">
+                              {{ link.title }}
+                            </a>
+                          </li>
+                          <li>
+                            <a href="{{ link.url }}" class="">
+                              {{ link.title }}
+                            </a>
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                    {%- endif -%}
+                {%- endcase -%}
+              </div>
+            {%- endfor -%}
+          </div>
+        </div>
+      </div>
+    {%- endif -%}
+
+    <div class="max-w-content flex justify-between mx-6 border-t-2 text-white border-white
+                                                                        py-6">
+      <div class="">
+        <ul class="flex">
+          {%- if section.settings.link_cgv == blank -%}
+            <li class="md:mr-6">
+              <a href="{{ section.settings.link_cgv }}" class="">
+                <span class="">Mentions Légales et CGV</span>
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if section.settings.link_cgv == blank -%}
+            <li class="md:mr-6">
+              <a href="{{ section.settings.link_cgv }}" class="">
+                <span class="">Mentions Légales et CGV</span>
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if section.settings.link_cgv == blank -%}
+            <li class="md:mr-6">
+              <a href="{{ section.settings.link_cgv }}" class="">
+                <span class="">Mentions Légales et CGV
+                </span>
+              </a>
+            </li>
+          {%- endif -%}
+        </ul>
+      </div>
+      <div class="">
+        <ul class="flex justify-end" role="list">
+          {%- if settings.social_instagram_link == blank -%}
+            <li class="pl-6">
+              <a href="{{ settings.social_instagram_link }}" class="h-10 w-10">
+                Insta
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if settings.social_youtube_link == blank -%}
+            <li class="pl-6">
+              <a href="{{ settings.social_youtube_link }}" class="">
+                Youtube
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if settings.social_facebook_link != blank -%}
+            <li class="pl-6">
+              <a href="{{ settings.social_facebook_link }}" class="">
+                Facebook
+              </a>
+            </li>
+          {%- endif -%}
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="">
+    <div class="bg-red-200 py-6">
+      <p class="max-w-content mx-auto text-center">
+        {{ section.settings.text_warning }}
+        Warning
+      </p>
+    </div>
+    <div class="py-6 flex justify-center">
+      Image
+    </div>
+  </div>
+</footer>
+
 {% schema %}
-  {
-    "name": "Section name",
-    "settings": []
-  }
+
+{
+  "name": "Footer Custom",
+  "blocks": [
+    {
+      "type": "link_list",
+      "name": "t:sections.footer.blocks.link_list.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "default": "Quick links",
+          "label": "t:sections.footer.blocks.link_list.settings.heading.label"
+        }, {
+          "type": "link_list",
+          "id": "menu",
+          "default": "footer",
+          "label": "t:sections.footer.blocks.link_list.settings.menu.label",
+          "info": "t:sections.footer.blocks.link_list.settings.menu.info"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.footer.settings.header__5.content",
+      "info": "t:sections.footer.settings.header__6.info"
+    }, {
+      "type": "header",
+      "content": "Liens"
+    }, {
+      "type": "text",
+      "id": "link_cgv",
+      "label": "Mentions légales et CGV"
+    }, {
+      "type": "text",
+      "id": "link_confidentialite",
+      "label": "Politique de confidentialité"
+    }, {
+      "type": "text",
+      "id": "link_cookies",
+      "label": "Préférences cookies"
+    }, {
+      "type": "header",
+      "content": "Interdiction Vente Alcool"
+    }, {
+      "type": "text",
+      "id": "text_warning",
+      "label": "Texte"
+    }, {
+      "type": "image_picker",
+      "id": "image_alcool_warning",
+      "label": "Image interdiction vente aux mineurs"
+    }
+  ]
+}
+
 {% endschema %}
-
-{% stylesheet %}
-{% endstylesheet %}
-
-{% javascript %}
-{% endjavascript %}
