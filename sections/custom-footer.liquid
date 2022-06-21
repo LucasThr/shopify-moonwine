@@ -39,7 +39,7 @@
     {%- endif -%}
 
     <div class="max-w-content flex justify-between mx-6 border-t-2 text-white border-white
-                                        py-6">
+                                                                        py-6">
       <div class="">
         <ul class="flex">
           {%- if section.settings.link_cgv == blank -%}
@@ -101,7 +101,7 @@
       </p>
     </div>
     <div class="py-6 flex justify-center">
-      <img src="{{ section.settings.image_alcool_warning | image_url: width:1500 }}" alt="{{ 'image warning' }}"/>
+      Image
     </div>
   </div>
 </footer>
@@ -110,7 +110,6 @@
 
 {
   "name": "Footer Custom",
-  
   "blocks": [
     {
       "type": "link_list",
@@ -179,22 +178,7 @@
       "id": "image_alcool_warning",
       "label": "Image interdiction vente aux mineurs"
     }
-  ],
-  "presets": [
-    {
-      "name": "Footer Custom",
-      "settings": {
-         "link_cgv": "Préférences"
-       },
-      "blocks": [
-        {
-          "type": "link_list"
-        },
-        {
-          "type": "link_list"
-        },
-      ]
-    }
+  ]
 }
 
 {% endschema %}
