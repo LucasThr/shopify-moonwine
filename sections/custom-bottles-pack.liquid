@@ -1,0 +1,30 @@
+<div class="max-w-content mx-auto px-6 flex items-center">
+  <img
+    src="{{ 'custom-bottles-pack.png' | asset_img_url: '1024x' }}"
+    alt="Pack de Bouteilles"
+    width="1024"
+    height="700"
+    loading="lazy"
+    class="w-[68%] -translate-x-18"
+  />
+  <div class="space-y-4 -translate-x-10">
+    <h3 class="text-[56px] text-dark">Le vin est une <br /> magnifique <br /> expression culturelle</h3>
+    <div class="flex space-x-6 font-medium">
+      <a href="#" class="px-2 py-7 bg-red rounded-full text-white">Découvrir nos boxs</a>
+      <a href="#" class="px-2 py-7 border border-gray-dark rounded-full">Découvrir les artistes</a>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Pack de Bouteilles",
+  "tag": "section",
+  "limit": 1,
+  "presets": [
+    {
+      "name": "Pack de Bouteilles"
+    }
+  ]
+}
+{% endschema %}

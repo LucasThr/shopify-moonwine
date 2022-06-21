@@ -5,9 +5,15 @@
       "settings": {
         "title": "Des vins vivants, respectueux de la nature"
       }
+    },
+    "1655816049054385d1": {
+      "type": "custom-bottles-pack",
+      "settings": {
+      }
     }
   },
   "order": [
-    "1655812594c73339b9"
+    "1655812594c73339b9",
+    "1655816049054385d1"
   ]
 }
