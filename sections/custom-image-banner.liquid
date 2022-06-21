@@ -2,7 +2,7 @@
   <h2 class="max-w-[1000px] mx-auto text-[80px] text-white text-center font-serif">{{ section.settings.title | escape }}</h2>
 </div>
 <img
-  src="{{ 'image-banner-background.png' | asset_img_url: '1920x' }}"
+  src="{{ 'custom-banner-background.png' | asset_img_url: '1920x' }}"
   alt="Vignes de fonds"
   width="1920"
   height="965"
@@ -10,7 +10,7 @@
   class="w-full"
 />
 <img
-  src="{{ 'image-banner-background.png' | asset_img_url: '1024x' }}"
+  src="{{ 'custom-banner-background.png' | asset_img_url: '1024x' }}"
   alt="Vignes gauches"
   width="1024"
   height="1264"
@@ -18,7 +18,7 @@
   class="absolute left-0 bottom-0 w-[35%]"
 />
 <img
-  src="{{ 'image-banner-background.png' | asset_img_url: '1024x' }}"
+  src="{{ 'custom-banner-background.png' | asset_img_url: '1024x' }}"
   alt="Vignes droites"
   width="1024"
   height="385"
@@ -28,7 +28,7 @@
 
 {% schema %}
 {
-  "name": "Bannière Image",
+  "name": "Presentation Banner",
   "tag": "section",
   "class": "relative",
   "limit": 1,
@@ -41,7 +41,7 @@
   ],
   "presets": [
     {
-      "name": "Bannière Image",
+      "name": "Presentation Banner",
       "settings": {
         "title": "Titre"
       }
