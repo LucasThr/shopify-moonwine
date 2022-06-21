@@ -1,0 +1,43 @@
+<div class="absolute inset-x-0 top-1/2 -translate-y-1/2">
+  <h2 class="max-w-[1000px] mx-auto text-[80px] text-white text-center font-serif">{{ section.settings.title | escape }}</h2>
+</div>
+<img
+  src="{{ 'image-banner-background.png' | asset_img_url: '1920x' }}"
+  alt="Vignes de fonds"
+  width="1920"
+  height="965"
+  loading="lazy"
+  class="w-full"
+/>
+<img
+  src="{{ 'image-banner-background.png' | asset_img_url: '1024x' }}"
+  alt="Vignes gauches"
+  width="1024"
+  height="1264"
+  loading="lazy"
+  class="absolute left-0 bottom-0 w-[35%]"
+/>
+<img
+  src="{{ 'image-banner-background.png' | asset_img_url: '1024x' }}"
+  alt="Vignes droites"
+  width="1024"
+  height="385"
+  loading="lazy"
+  class="absolute right-0 bottom-0 w-[65%]"
+/>
+
+{% schema %}
+{
+  "name": "Bannière Image",
+  "tag": "section",
+  "class": "relative",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre"
+    }
+  ]
+}
+{% endschema %}
