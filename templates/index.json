@@ -6,6 +6,14 @@
         "title": "Des vins vivants, respectueux de la nature"
       }
     },
+    "1655915878d77c4479": {
+      "type": "custom-latest-products",
+      "settings": {
+        "title": "Nos vins du moment",
+        "collection": "cave-exclusive",
+        "productLength": 4
+      }
+    },
     "1655816049054385d1": {
       "type": "custom-bottles-pack",
       "settings": {
@@ -29,6 +37,7 @@
   },
   "order": [
     "1655812594c73339b9",
+    "1655915878d77c4479",
     "1655816049054385d1",
     "1655890697a5d50126",
     "16559027566fb828bc",
