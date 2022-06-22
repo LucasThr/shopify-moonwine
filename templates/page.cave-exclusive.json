@@ -7,9 +7,15 @@
         "padding_top": 28,
         "padding_bottom": 28
       }
+    },
+    "16559132930ade48da": {
+      "type": "custom-main-shop",
+      "settings": {
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "16559132930ade48da"
   ]
 }
