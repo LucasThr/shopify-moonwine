@@ -1,17 +1,76 @@
+<div class="max-w-content py-64 ">
+  <div class="flex flex-col md:flex-row justify-center items-center">
+    {% paginate collections.abonnements.products by 1000 %}
+      {% for product in collections.abonnements.products %}
+        <article class="h-[500px] w-[250px] shadow-xl bg-white flex flex-col justify-between p-6 mx-6">
+          <div class="flex justify-between">
+            <div class="font-serif text-3xl">
+              {{ product.title }}
+            </div>
+            <div class="flex flex-col ">
+              <span class=" text-right text-3xl pr-4  text-red">
+                {{product.price}}€
+              </span>
+              <span class="text-lg text-right">
+                / mois (hors livraison)
+              </span>
+            </div>
+          </div>
+          <div class="flex flex-col justify-center">
+
+            <div class="mb-10">
+              {% for options in product.options_by_name['plus'].values %}
+              <div class="flex mt-6">
+                  <span class="mr-6">
+                    {%- render 'custom-icon-check' -%}
+                  </span>
+                  <span class="text-xl">
+             {{ options }}
+                  </span>
+                </div>
+              {% endfor %}
+              {% for options in product.options_by_name['moins'].values %}
+              <div class="flex mt-6">
+                  <span class="mr-6">
+                    {%- render 'custom-icon-uncheck' -%}
+                  </span>
+                  <span class="text-xl text-gray-medium">
+             {{ options }}
+                  </span>
+                </div>
+              {% endfor %}
+            </div>
+            <a href="{{ product.url }}" class="self-center text-xl rounded-full px-8 py-4 text-white bg-red my-6">Je m'abonne</a>
+          </div>
+        </article>
+      {% endfor %}
+    {% endpaginate %}
+  </div>
+
+</div>
+
 {% schema %}
-  {
-    "name": "Nos abonnements",
-    "settings": [],
-	"presets": [
+
+{
+  "name": "Nos abonnements",
+  "settings": [],
+  "presets": [
     {
       "name": "Nos abonnements"
     }
   ]
-  }
+}
+
 {% endschema %}
 
 {% stylesheet %}
+
+
+
 {% endstylesheet %}
 
 {% javascript %}
+
+
+
 {% endjavascript %}
