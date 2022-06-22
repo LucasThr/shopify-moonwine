@@ -61,8 +61,8 @@
             </svg>            
           </span>
           <img
-            src="{{ 'bottle-1.png' | asset_img_url: '258x' }}"
-            alt="Cave à vin"
+            src="{{ product.featured_media | image_url: width: 258 }}"
+            alt="{{ product.featured_media.alt | escape }}"
             width="258"
             height="334"
             loading="lazy"
