@@ -1,0 +1,86 @@
+{%- style -%}
+#section-{{ section.id }} article .absolute {
+  background: linear-gradient(180deg, rgba(30, 32, 37, 0.7) 0%, rgba(30, 32, 37, 0) 10%), linear-gradient(180deg, rgba(30, 32, 37, 0) 0.2%, rgba(30, 32, 37, 0.04) 28.74%, rgba(30, 32, 37, 0.4) 70%, #1E2025 100%);
+}
+{%- endstyle -%}
+
+<section id="section-{{ section.id }}" class="pt-[90px] pb-[110px] bg-[#F5F4EA]">
+  <div class="max-w-content mx-auto px-[24px]">
+    <h2 class="mb-[36px] text-[80px] text-dark text-center font-serif">Notre actualité</h2>
+    <div class="flex justify-evenly">
+      <a href="#">
+        <article class="relative rounded-[10px] overflow-hidden">
+          <img
+            src="{{ 'custom-article-1.jpg' | asset_img_url: '290x' }}"
+            alt="Cave à vin"
+            width="290"
+            height="410"
+            loading="lazy"
+            class="w-[290px] h-[410px] object-cover"
+          />
+          <div class="absolute inset-0 flex flex-col justify-between items-center px-[16px] pt-[12px] pb-[20px] text-white text-center">
+            <p class="text-[14px]">Presse</p>
+            <div class="space-y-[12px]">
+              <h3 class="text-white text-[16px] font-bold font-sans">Comment est fabriqué le vin biodyanmique ?</h3>
+              <p class="text-[11px] text-[#E6E6E6]">24 juin, 2022  ·  32 commentaires</p>
+            </div>
+          </div>
+        </article>
+      </a>
+      <a href="#">
+        <article class="relative rounded-[10px] overflow-hidden">
+          <img
+          src="{{ 'custom-article-2.jpg' | asset_img_url: '290x' }}"
+            alt="Cave à vin"
+            width="290"
+            height="410"
+            loading="lazy"
+            class="w-[290px] h-[410px] object-cover"
+          />
+          <div class="absolute inset-0 flex flex-col justify-between items-center px-[16px] pt-[12px] pb-[20px] text-white text-center">
+            <p class="text-[14px]">Presse</p>
+            <div class="space-y-[12px]">
+              <h3 class="text-white text-[16px] font-bold font-sans">Quel vin biodynamique choisir pour vos plats d’été ?</h3>
+              <p class="text-[11px] text-[#E6E6E6]">24 juin, 2022  ·  32 commentaires</p>
+            </div>
+          </div>
+        </article>
+      </a>
+      <a href="#">
+        <article class="relative rounded-[10px] overflow-hidden">
+          <img
+            src="{{ 'custom-article-3.jpg' | asset_img_url: '290x' }}"
+            alt="Cave à vin"
+            width="290"
+            height="410"
+            loading="lazy"
+            class="w-[290px] h-[410px] object-cover"
+          />
+          <div class="absolute inset-0 flex flex-col justify-between items-center px-[16px] pt-[12px] pb-[20px] text-white text-center">
+            <p class="text-[14px]">Presse</p>
+            <div class="space-y-[12px]">
+              <h3 class="text-white text-[16px] font-bold font-sans">On parle de nous dans la Voix du Nord !</h3>
+              <p class="text-[11px] text-[#E6E6E6]">24 juin, 2022  ·  32 commentaires</p>
+            </div>
+          </div>
+        </article>
+      </a>
+    </div>
+    <div class="flex mt-[56px]">
+      <a href="#" class="mx-auto px-[32px] py-[12px] bg-red rounded-full text-white">Voir plus d'actualités</a>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Derniers Articles",
+  "tag": "div",
+  "limit": 1,
+  "presets": [
+    {
+      "name": "Derniers Articles"
+    }
+  ]
+}
+{% endschema %}

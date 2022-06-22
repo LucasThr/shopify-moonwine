@@ -16,6 +16,11 @@
       "settings": {
       }
     },
+    "16559027566fb828bc": {
+      "type": "custom-latest-articles",
+      "settings": {
+      }
+    },
     "16558172108cf648ab": {
       "type": "custom-newsletter",
       "settings": {
@@ -26,6 +31,7 @@
     "1655812594c73339b9",
     "1655816049054385d1",
     "1655890697a5d50126",
+    "16559027566fb828bc",
     "16558172108cf648ab"
   ]
 }
