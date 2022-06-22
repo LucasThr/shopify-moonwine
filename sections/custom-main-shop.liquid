@@ -1,21 +1,86 @@
-<div>
-  Boutique
+<div class="max-w-content mx-auto">
+  <div class="flex justify-evenly my-10">
+    <div>
+      <span>Couleurs</span>
+      <div class="rounded border-2 py-4 px-6">- Toutes les couleurs -</div>
+    </div>
+    <div>
+      <span>Couleurs</span>
+      <div class="rounded border-2 py-4 px-6">- Toutes les couleurs -</div>
+    </div>
+    <div>
+      <span>Couleurs</span>
+      <div class="rounded border-2 py-4 px-6">- Toutes les couleurs -</div>
+    </div>
+
+  </div>
+  <div class="">
+    {%- paginate collections.all.products by section.settings.products_per_page -%}
+      {%- if collections.all.products.size == 0 -%}
+        <div class="collection collection--empty page-width" id="product-grid" data-id="{{ section.id }}">
+          <div class="loading-overlay gradient"></div>
+          <div class="title-wrapper center">
+            <h2 class="title title--primary">
+              {{ 'sections.collection_template.empty' | t }}<br>
+              {{ 'sections.collection_template.use_fewer_filters_html' | t: link: collection.url, class: "underlined-link link" }}
+            </h2>
+          </div>
+        </div>
+      {%- else -%}
+        <div class="collection{% if section.settings.filter_type != 'vertical' %} page-width{% endif %}">
+          <div class="loading-overlay gradient"></div>
+
+          <ul id="product-grid" data-id="{{ section.id }}" class="
+                            grid product-grid grid--{{ section.settings.columns_mobile }}-col-tablet-down
+                            grid--{{ section.settings.columns_desktop }}-col-desktop">
+            {%- for product in collections.all.products -%}
+              {% assign productCollections = product.collections | map: "handle" %}
+              {% unless productCollections contains 'abonnements' %}
+                {% assign lazy_load = false %}
+                {%- if forloop.index > 2 -%}
+                  {%- assign lazy_load = true -%}
+                {%- endif -%}
+                <li class="grid__item">
+                  {% render 'custom-card-product',
+                    product: product,
+                  %}
+                </li>
+              {% endunless %}
+
+            {%- endfor -%}
+          </ul>
+
+          {%- if paginate.pages > 1 -%}
+            {% render 'pagination', paginate: paginate, anchor: '' %}
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
 </div>
 
 {% schema %}
-  {
-    "name": "Boutique Cave Exclusive",
-    "settings": [],
-    "presets": [
-        {
-          "name": "Boutique Cave Exclusive"
-        }
-      ]
-  }
+
+{
+  "name": "Boutique Cave Exclusive",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Boutique Cave Exclusive"
+    }
+  ]
+}
+
 {% endschema %}
 
 {% stylesheet %}
+
+
+
 {% endstylesheet %}
 
 {% javascript %}
+
+
+
 {% endjavascript %}

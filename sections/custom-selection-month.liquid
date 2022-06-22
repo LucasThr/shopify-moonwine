@@ -7,14 +7,8 @@
       {% for product in collections.selection-du-mois.products %}
         <article class="w-[237px] h-[354px]  mx-10 flex flex-col items-center justify-between">
           <figure>
-            {% for image in product.images %}
-
-            {%- if image.position == 1 -%}
-              <img src="{{ image.src | image_url: width: 300 }}" alt="{{ product.title }}" loading="lazy" class="h-[300px] w-[237px] object-cover"/>
-            </figure>
-          {% endif %}
-            
-          {% endfor %}
+            <img src="{{ product.featured_media | image_url: width: 300 }}" alt="{{ product.title }}" loading="lazy" class="h-[300px] w-[237px] object-cover"/>
+          </figure>
           <div class="flex flex-col items-center mt-3">
             <span class="font-sans font-bold my-4">
               {{ product.title }}

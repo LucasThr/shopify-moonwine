@@ -1,0 +1,15 @@
+<a href="{{ product.url }}">
+  <article class="w-[237px] h-[354px]  mx-10 flex flex-col items-center justify-between my-10">
+    <figure>
+        <img src="{{ product.featured_media | image_url: width: 300 }}" alt="{{ product.title }}" loading="lazy" class="h-[300px] w-[237px] object-cover"/>
+      </figure>
+    <div class="flex flex-col items-center mt-3">
+      <span class="font-sans font-bold my-4">
+        {{ product.title }}
+      </span>
+      <span class="text-gray-400 font-sans ">
+        {{ product.price }}€
+      </span>
+    </div>
+  </article>
+</a>
