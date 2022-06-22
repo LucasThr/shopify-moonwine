@@ -1,27 +1,57 @@
-
-<div>
-  <div class="flex max-w-[1100px] w-full">
-    <h2 class="ml-20 font-serif text-7xl mb-20">Nos abonnemments</h2>
+<div class="flex flex-col w-full py-20 items-center ">
+  <div class="flex max-w-[1250px] w-full">
+    <h2 class="ml-20 font-serif text-7xl mb-20">La sélection du mois</h2>
   </div>
-  <article>
+  <div class="flex justify-center">
+    {% paginate collections.selection-du-mois.products by 1000 %}
+      {% for product in collections.selection-du-mois.products %}
+        <article class="w-[237px] h-[354px]  mx-10 flex flex-col items-center justify-between">
+          <figure>
+            {% for image in product.images %}
 
-  </article>
+            {%- if image.position == 1 -%}
+              <img src="{{ image.src | image_url: width: 300 }}" alt="{{ product.title }}" loading="lazy" class="h-[300px] w-[237px] object-cover"/>
+            </figure>
+          {% endif %}
+            
+          {% endfor %}
+          <div class="flex flex-col items-center mt-3">
+            <span class="font-sans font-bold my-4">
+              {{ product.title }}
+            </span>
+            <span class="text-gray-400 font-sans ">
+              {{ product.price }}€
+            </span>
+          </div>
+        </article>
+      {% endfor %}
+    {% endpaginate %}
+  </div>
+
 </div>
 
 {% schema %}
-  {
-    "name": "Selection du mois",
-    "settings": [],
-    "presets": [
-        {
-          "name": "Selection du mois"
-        }
-      ]
-  }
+
+{
+  "name": "Selection du mois",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Selection du mois"
+    }
+  ]
+}
+
 {% endschema %}
 
 {% stylesheet %}
+
+
+
 {% endstylesheet %}
 
 {% javascript %}
+
+
+
 {% endjavascript %}

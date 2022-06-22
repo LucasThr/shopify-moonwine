@@ -1,12 +1,12 @@
 <div class="flex flex-col w-full py-20 items-center ">
-  <div class="flex max-w-[1100px] w-full">
+  <div class="flex max-w-[1250px] w-full">
     <h2 class="ml-20 font-serif text-7xl mb-20">Nos abonnemments</h2>
   </div>
 
   <div class="flex flex-col md:flex-row justify-center items-center">
     {% paginate collections.abonnements.products by 1000 %}
       {% for product in collections.abonnements.products %}
-        <article class="h-[500px] w-[250px] shadow-xl bg-white flex flex-col justify-between p-6 mx-6">
+        <article class="h-[507px] w-[330px] shadow-xl bg-white flex flex-col justify-between p-6 mx-6">
           <div class="flex justify-between">
             <div class="font-serif text-3xl">
               {{ product.title }}
