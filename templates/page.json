@@ -6,9 +6,15 @@
         "padding_top": 28,
         "padding_bottom": 28
       }
+    },
+    "16558876718c8df824": {
+      "type": "custom-subscriptions",
+      "settings": {
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "16558876718c8df824"
   ]
 }
