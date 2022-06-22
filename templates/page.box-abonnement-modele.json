@@ -17,11 +17,17 @@
       "type": "custom-subscriptions",
       "settings": {
       }
+    },
+    "1655907959a25decaf": {
+      "type": "custom-selection-month",
+      "settings": {
+      }
     }
   },
   "order": [
     "main",
     "165590523945e82c4e",
-    "16558876718c8df824"
+    "16558876718c8df824",
+    "1655907959a25decaf"
   ]
 }
