@@ -25,6 +25,7 @@ module.exports = {
         content: '1440px'
       },
       fontFamily: {
+        sans: ['Jost', 'sans-serif'],
         serif: ['Eugusto', 'serif']
       },
       boxShadow: {
@@ -35,4 +36,4 @@ module.exports = {
   plugins: [],
 }
 
-//  npx tailwindcss -o ./assets/custom-tailwind.css -w -m
+//  npx tailwindcss -o ./assets/custom-tailwind.css -m -w
