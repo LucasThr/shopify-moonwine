@@ -11,6 +11,11 @@
       "settings": {
       }
     },
+    "1655890697a5d50126": {
+      "type": "custom-text-banner",
+      "settings": {
+      }
+    },
     "16558172108cf648ab": {
       "type": "custom-newsletter",
       "settings": {
@@ -20,6 +25,7 @@
   "order": [
     "1655812594c73339b9",
     "1655816049054385d1",
+    "1655890697a5d50126",
     "16558172108cf648ab"
   ]
 }

@@ -227,7 +227,54 @@ body {
   src: url({{ 'custom-eugusto.otf' | asset_url }}) format('opentype');
 }
 
+@font-face {
+  font-family: 'Jost';
+  font-style: sans-serif;
+  font-weight: 200;
+  src: url({{ 'custom-jost-thin.ttf' | asset_url }}) format('truetype');
+}
 
+@font-face {
+  font-family: 'Jost';
+  font-style: sans-serif;
+  font-weight: 300;
+  src: url({{ 'custom-jost-light.ttf' | asset_url }}) format('truetype');
+}
+
+@font-face {
+  font-family: 'Jost';
+  font-style: sans-serif;
+  font-weight: 400;
+  src: url({{ 'custom-jost-regular.ttf' | asset_url }}) format('truetype');
+}
+
+@font-face {
+  font-family: 'Jost';
+  font-style: sans-serif;
+  font-weight: 500;
+  src: url({{ 'custom-jost-medium.ttf' | asset_url }}) format('truetype');
+}
+
+@font-face {
+  font-family: 'Jost';
+  font-style: sans-serif;
+  font-weight: 600;
+  src: url({{ 'custom-jost-semibold.ttf' | asset_url }}) format('truetype');
+}
+
+@font-face {
+  font-family: 'Jost';
+  font-style: sans-serif;
+  font-weight: 700;
+  src: url({{ 'custom-jost-bold.ttf' | asset_url }}) format('truetype');
+}
+
+@font-face {
+  font-family: 'Jost';
+  font-style: sans-serif;
+  font-weight: 800;
+  src: url({{ 'custom-jost-block.ttf' | asset_url }}) format('truetype');
+}
 
 {% endstyle %}
 
@@ -252,7 +299,7 @@ body {
     </script>
   </head>
 
-  <body class="gradient">
+  <body class="gradient font-sans">
     <a class="skip-to-content-link button visually-hidden" href="#MainContent">
       {{ "accessibility.skip_to_text" | t }}
     </a>
