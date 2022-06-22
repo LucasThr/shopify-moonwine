@@ -7,6 +7,11 @@
         "padding_bottom": 28
       }
     },
+    "165590523945e82c4e": {
+      "type": "custom-month-box",
+      "settings": {
+      }
+    },
     "16558876718c8df824": {
       "type": "custom-subscriptions",
       "settings": {
@@ -15,6 +20,7 @@
   },
   "order": [
     "main",
+    "165590523945e82c4e",
     "16558876718c8df824"
   ]
 }
