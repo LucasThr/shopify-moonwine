@@ -1,37 +1,56 @@
-<img
-  src="{{ 'custom-red-background.jpg' | asset_img_url: '1920x' }}"
-  alt="Fond de motifs"
-  width="1920"
-  height="594"
-  loading="lazy"
-  class="min-h-[450px]"
-/>
-<div class="absolute inset-x-0 top-0 pt-[100px] pb-[140px]">
-  <div class="max-w-content mx-auto px-[24px] flex justify-between text-white">
-    <div class="max-w-[256px] space-y-[56px]">
-      <h3 class="text-[30px] font-serif">Un vin unique</h3>
-      <p class="text-[14px]">En collaboration avec un artiste. Liberté d’expression et créativité sont les mots d’ordre de notre concept.</p>
-    </div>
-    <div class="max-w-[256px] space-y-[56px]">
-      <h3 class="text-[30px] font-serif">Vins naturels</h3>
-      <p class="text-[14px]">Basés sur la biodynamie, c'est-à-dire que le vin est exploité selon un calendrier de biodynamie.</p>
-    </div>
-    <div class="max-w-[256px] space-y-[56px]">
-      <h3 class="text-[30px] font-serif">L’ecologie</h3>
-      <p class="text-[14px]">Valeur fondamentale, c’est pourquoi nous mettons tout en œuvre pour réduire au maximum notre empreinte carbone et toutes nos productions sont recyclables.</p>
-    </div>
-    <div class="max-w-[256px] space-y-[56px]">
-      <h3 class="text-[30px] font-serif">Une expérience</h3>
-      <p class="text-[14px]">Nous avons à cœur de rassembler les bons vivants, de reconnecter l’Homme à des produits naturels et locaux, et de permettre à chacun de vivre une expérience.</p>
+<section id="parallax-text-banner" class="relative mt-[180px]">
+  <img
+    id="parallax-grape"
+    src="{{ 'custom-grape.png' | asset_img_url: '256x' }}"
+    alt="Raisin"
+    width="256"
+    height="158"
+    loading="lazy"
+    class="absolute -top-[132px] left-[70%] min-w-[280px]"
+  />
+  <img
+    src="{{ 'custom-red-background.jpg' | asset_img_url: '1920x' }}"
+    alt="Fond de motifs"
+    width="1920"
+    height="594"
+    loading="lazy"
+    class="min-h-[450px]"
+  />
+  <div class="absolute inset-x-0 top-0 pt-[100px] pb-[140px]">
+    <div class="max-w-content mx-auto px-[24px] flex justify-between text-white">
+      <div class="max-w-[256px] space-y-[56px]">
+        <h3 class="text-[30px] text-white font-serif">Un vin unique</h3>
+        <p class="text-[14px]">En collaboration avec un artiste. Liberté d’expression et créativité sont les mots d’ordre de notre concept.</p>
+      </div>
+      <div class="max-w-[256px] space-y-[56px]">
+        <h3 class="text-[30px] text-white font-serif">Vins naturels</h3>
+        <p class="text-[14px]">Basés sur la biodynamie, c'est-à-dire que le vin est exploité selon un calendrier de biodynamie.</p>
+      </div>
+      <div class="max-w-[256px] space-y-[56px]">
+        <h3 class="text-[30px] text-white font-serif">L’ecologie</h3>
+        <p class="text-[14px]">Valeur fondamentale, c’est pourquoi nous mettons tout en œuvre pour réduire au maximum notre empreinte carbone et toutes nos productions sont recyclables.</p>
+      </div>
+      <div class="max-w-[256px] space-y-[56px]">
+        <h3 class="text-[30px] text-white font-serif">Une expérience</h3>
+        <p class="text-[14px]">Nous avons à cœur de rassembler les bons vivants, de reconnecter l’Homme à des produits naturels et locaux, et de permettre à chacun de vivre une expérience.</p>
+      </div>
     </div>
   </div>
-</div>
+</section>
+
+{% javascript %}
+const parallaxTextBanner = document.getElementById('parallax-text-banner')
+const parallaxGrape = document.getElementById('parallax-grape')
+
+window.addEventListener('scroll', () => {
+  document.getElementById('parallax-grape').style.left = `${ parseFloat(70 - ((parallaxTextBanner.offsetTop - window.scrollY) / 100)) }%`
+})
+{% endjavascript %}
 
 {% schema %}
 {
   "name": "Text Banner",
-  "tag": "section",
-  "class": "relative",
+  "tag": "div",
   "limit": 1,
   "presets": [
     {
