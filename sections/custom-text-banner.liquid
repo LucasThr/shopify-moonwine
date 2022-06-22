@@ -1,0 +1,42 @@
+<img
+  src="{{ 'custom-red-background.jpg' | asset_img_url: '1920x' }}"
+  alt="Fond de motifs"
+  width="1920"
+  height="594"
+  loading="lazy"
+  class="min-h-[450px]"
+/>
+<div class="absolute inset-x-0 top-0 pt-[100px] pb-[140px]">
+  <div class="max-w-content mx-auto px-[24px] flex justify-between text-white">
+    <div class="max-w-[256px] space-y-[56px]">
+      <h3 class="text-[30px] font-serif">Un vin unique</h3>
+      <p class="text-[14px]">En collaboration avec un artiste. Liberté d’expression et créativité sont les mots d’ordre de notre concept.</p>
+    </div>
+    <div class="max-w-[256px] space-y-[56px]">
+      <h3 class="text-[30px] font-serif">Vins naturels</h3>
+      <p class="text-[14px]">Basés sur la biodynamie, c'est-à-dire que le vin est exploité selon un calendrier de biodynamie.</p>
+    </div>
+    <div class="max-w-[256px] space-y-[56px]">
+      <h3 class="text-[30px] font-serif">L’ecologie</h3>
+      <p class="text-[14px]">Valeur fondamentale, c’est pourquoi nous mettons tout en œuvre pour réduire au maximum notre empreinte carbone et toutes nos productions sont recyclables.</p>
+    </div>
+    <div class="max-w-[256px] space-y-[56px]">
+      <h3 class="text-[30px] font-serif">Une expérience</h3>
+      <p class="text-[14px]">Nous avons à cœur de rassembler les bons vivants, de reconnecter l’Homme à des produits naturels et locaux, et de permettre à chacun de vivre une expérience.</p>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Text Banner",
+  "tag": "section",
+  "class": "relative",
+  "limit": 1,
+  "presets": [
+    {
+      "name": "Text Banner"
+    }
+  ]
+}
+{% endschema %}
