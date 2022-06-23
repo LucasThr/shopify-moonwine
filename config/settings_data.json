@@ -192,21 +192,21 @@
           "369ba205-4dcb-4e40-b58c-c8f78192f24f": {
             "type": "link_list",
             "settings": {
-              "heading": "Quick links",
+              "heading": "Nos services",
               "menu": "main-menu"
             }
           },
           "9e2db3d1-f35d-48e6-9bd3-00ba708caf6c": {
             "type": "link_list",
             "settings": {
-              "heading": "Quick links",
+              "heading": "A propos",
               "menu": "principale"
             }
           },
           "953a4aa4-f40f-4031-9647-855a3cf9b91b": {
             "type": "link_list",
             "settings": {
-              "heading": "Quick links",
+              "heading": "Contact",
               "menu": "footer"
             }
           }
@@ -221,6 +221,11 @@
           "link_confidentialite": "",
           "link_cookies": "",
           "text_warning": ""
+        }
+      },
+      "custom-header": {
+        "type": "custom-header",
+        "settings": {
         }
       }
     },
