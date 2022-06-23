@@ -1,1114 +1,216 @@
-<section id="MainProduct-{{ section.id }}" class="page-width section-{{ section.id }}-padding" data-section="{{ section.id }}">
-  {{ 'section-main-product.css' | asset_url | stylesheet_tag }}
-  {{ 'component-accordion.css' | asset_url | stylesheet_tag }}
-  {{ 'component-price.css' | asset_url | stylesheet_tag }}
-  {{ 'component-rte.css' | asset_url | stylesheet_tag }}
-  {{ 'component-slider.css' | asset_url | stylesheet_tag }}
-  {{ 'component-rating.css' | asset_url | stylesheet_tag }}
-  {{ 'component-loading-overlay.css' | asset_url | stylesheet_tag }}
-  {{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
+{%- style -%}
+html {
+  scroll-behavior: smooth;
+}
 
-  {%- style -%}
-    .section-{{ section.id }}-padding {
-      padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
-      padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
-    }
+#MainProduct-{{ section.id }} .active-grid {
+  display: grid;
+}
 
-    @media screen and (min-width: 750px) {
-      .section-{{ section.id }}-padding {
-        padding-top: {{ section.settings.padding_top }}px;
-        padding-bottom: {{ section.settings.padding_bottom }}px;
-      }
-    }
-  {%- endstyle -%}
+#MainProduct-{{ section.id }} #content-histoire {
+  background: url({{ 'custom-green-light-background.svg' | asset_url }}) center / cover;
+}
+{%- endstyle -%}
 
-  <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
-
-  {%- assign first_3d_model = product.media | where: "media_type", "model" | first -%}
-  {%- if first_3d_model -%}
-    {{ 'component-product-model.css' | asset_url | stylesheet_tag }}
-    <link id="ModelViewerStyle" rel="stylesheet" href="https://cdn.shopify.com/shopifycloud/model-viewer-ui/assets/v1.0/model-viewer-ui.css" media="print" onload="this.media='all'">
-    <link id="ModelViewerOverride" rel="stylesheet" href="{{ 'component-model-viewer-ui.css' | asset_url }}" media="print" onload="this.media='all'">
-  {%- endif -%}
-
-  <div class="product product--{{ section.settings.media_size }} product--{{ section.settings.gallery_layout }} grid grid--1-col {% if product.media.size > 0 %}grid--2-col-tablet{% else %}product--no-media{% endif %}">
-    <div class="grid__item product__media-wrapper">
-      <media-gallery id="MediaGallery-{{ section.id }}" role="region" {% if section.settings.enable_sticky_info %}class="product__media-gallery"{% endif %} aria-label="{{ 'products.product.media.gallery_viewer' | t }}" data-desktop-layout="{{ section.settings.gallery_layout }}">
-        <div id="GalleryStatus-{{ section.id }}" class="visually-hidden" role="status"></div>
-        <slider-component id="GalleryViewer-{{ section.id }}" class="slider-mobile-gutter">
-          <a class="skip-to-content-link button visually-hidden quick-add-hidden" href="#ProductInfo-{{ section.id }}">
-            {{ "accessibility.skip_to_product_info" | t }}
-          </a>
-          <ul id="Slider-Gallery-{{ section.id }}" class="product__media-list contains-media grid grid--peek list-unstyled slider slider--mobile" role="list">
-            {%- liquid
-              assign variant_images = product.images | where: 'attached_to_variant?', true | map: 'src'
-              assign media_count = product.media.size
-              if section.settings.hide_variants and media_count > 1
-                assign media_count = media_count | minus: variant_images.size | plus: 1
-              endif
-
-              if section.settings.media_size == 'large'
-                assign media_width = 0.65
-              elsif section.settings.media_size == 'medium'
-                assign media_width = 0.55
-              elsif section.settings.media_size == 'small'
-                assign media_width = 0.45
-              endif
-            -%}
-            {%- if product.selected_or_first_available_variant.featured_media != null -%}
-              {%- assign featured_media = product.selected_or_first_available_variant.featured_media -%}
-              <li id="Slide-{{ section.id }}-{{ featured_media.id }}" class="product__media-item grid__item slider__slide is-active{% if featured_media.media_type != 'image' %} product__media-item--full{% endif %}{% if section.settings.hide_variants and variant_images contains featured_media.src %} product__media-item--variant{% endif %}" data-media-id="{{ section.id }}-{{ featured_media.id }}">
-                {%- assign media_position = 1 -%}
-                {% render 'product-thumbnail', media: featured_media, position: media_position, loop: section.settings.enable_video_looping, modal_id: section.id, xr_button: true, media_width: media_width, lazy_load: false %}
-              </li>
-            {%- endif -%}
-            {%- for media in product.media -%}
-              {%- unless media.id == product.selected_or_first_available_variant.featured_media.id -%}
-                <li id="Slide-{{ section.id }}-{{ media.id }}" class="product__media-item grid__item slider__slide{% if product.selected_or_first_available_variant.featured_media == null and forloop.index == 1 %} is-active{% endif %}{% if media.media_type != 'image' %} product__media-item--full{% endif %}{% if section.settings.hide_variants and variant_images contains media.src %} product__media-item--variant{% endif %}" data-media-id="{{ section.id }}-{{ media.id }}">
-                  {%- liquid
-                    assign media_position = media_position | default: 0 | plus: 1
-                    assign lazy_load = false
-                    if media_position > 1
-                      assign lazy_load = true
-                    endif
-                    render 'product-thumbnail', media: media, position: media_position, loop: section.settings.enable_video_looping, modal_id: section.id, xr_button: true, media_width: media_width, lazy_load: lazy_load
-                  -%}
-                </li>
-              {%- endunless -%}
-            {%- endfor -%}
-          </ul>
-          <div class="slider-buttons no-js-hidden quick-add-hidden{% if media_count < 2 or section.settings.mobile_thumbnails == 'show' %} small-hide{% endif %}">
-            <button type="button" class="slider-button slider-button--prev" name="previous" aria-label="{{ 'general.slider.previous_slide' | t }}">{% render 'icon-caret' %}</button>
-            <div class="slider-counter caption">
-              <span class="slider-counter--current">1</span>
-              <span aria-hidden="true"> / </span>
-              <span class="visually-hidden">{{ 'general.slider.of' | t }}</span>
-              <span class="slider-counter--total">{{ media_count }}</span>
-            </div>
-            <button type="button" class="slider-button slider-button--next" name="next" aria-label="{{ 'general.slider.next_slide' | t }}">{% render 'icon-caret' %}</button>
-          </div>
-        </slider-component>
-        {%- if first_3d_model -%}
-          <button
-            class="button button--full-width product__xr-button"
-            type="button"
-            aria-label="{{ 'products.product.xr_button_label' | t }}"
-            data-shopify-xr
-            data-shopify-model3d-id="{{ first_3d_model.id }}"
-            data-shopify-title="{{ product.title | escape }}"
-            data-shopify-xr-hidden
-          >
-            {% render 'icon-3d-model' %}
-            {{ 'products.product.xr_button' | t }}
-          </button>
-        {%- endif -%}
-        {%- if media_count > 1 and section.settings.gallery_layout != 'stacked' or section.settings.mobile_thumbnails == 'show' -%}
-          <slider-component id="GalleryThumbnails-{{ section.id }}" class="thumbnail-slider slider-mobile-gutter quick-add-hidden{% if section.settings.mobile_thumbnails == 'hide' %} small-hide{% endif %}{% if media_count <= 3 %} thumbnail-slider--no-slide{% endif %}">
-            <button type="button" class="slider-button slider-button--prev{% if media_count <= 3 %} small-hide{% endif %}{% if media_count <= 4 %} medium-hide large-up-hide{% endif %}" name="previous" aria-label="{{ 'general.slider.previous_slide' | t }}" aria-controls="GalleryThumbnails-{{ section.id }}" data-step="3">{% render 'icon-caret' %}</button>
-            <ul id="Slider-Thumbnails-{{ section.id }}" class="thumbnail-list list-unstyled slider slider--mobile{% if section.settings.gallery_layout == 'thumbnail_slider' %} slider--tablet-up{% endif %}">
-              {%- if featured_media != null -%}
-                {%- liquid
-                  capture media_index
-                    if featured_media.media_type == 'model'
-                      increment model_index
-                    elsif featured_media.media_type == 'video' or featured_media.media_type == 'external_video'
-                      increment video_index
-                    elsif featured_media.media_type == 'image'
-                      increment image_index
-                    endif
-                  endcapture
-                  assign media_index = media_index | plus: 1
-                -%}
-                <li id="Slide-Thumbnails-{{ section.id }}-0" class="thumbnail-list__item slider__slide{% if section.settings.hide_variants and variant_images contains featured_media.src %} thumbnail-list_item--variant{% endif %}" data-target="{{ section.id }}-{{ featured_media.id }}" data-media-position="{{ media_index }}">
-                  <button class="thumbnail global-media-settings global-media-settings--no-shadow {% if featured_media.preview_image.aspect_ratio > 1 %}thumbnail--wide{% else %}thumbnail--narrow{% endif %}"
-                    aria-label="{%- if featured_media.media_type == 'image' -%}{{ 'products.product.media.load_image' | t: index: media_index }}{%- elsif featured_media.media_type == 'model' -%}{{ 'products.product.media.load_model' | t: index: media_index }}{%- elsif featured_media.media_type == 'video' or featured_media.media_type == 'external_video' -%}{{ 'products.product.media.load_video' | t: index: media_index }}{%- endif -%}"
-                    aria-current="true"
-                    aria-controls="GalleryViewer-{{ section.id }}"
-                    aria-describedby="Thumbnail-{{ section.id }}-0"
-                  >
-                    <img id="Thumbnail-{{ section.id }}-0" srcset="{% if featured_media.preview_image.width >= 54 %}{{ featured_media.preview_image | image_url: width: 54 }} 54w,{% endif %}
-                      {% if featured_media.preview_image.width >= 74 %}{{ featured_media.preview_image | image_url: width: 74 }} 74w,{% endif %}
-                      {% if featured_media.preview_image.width >= 104 %}{{ featured_media.preview_image | image_url: width: 104 }} 104w,{% endif %}
-                      {% if featured_media.preview_image.width >= 162 %}{{ featured_media.preview_image | image_url: width: 162 }} 162w,{% endif %}
-                      {% if featured_media.preview_image.width >= 208 %}{{ featured_media.preview_image | image_url: width: 208 }} 208w,{% endif %}
-                      {% if featured_media.preview_image.width >= 324 %}{{ featured_media.preview_image | image_url: width: 324 }} 324w,{% endif %}
-                      {% if featured_media.preview_image.width >= 416 %}{{ featured_media.preview_image | image_url: width: 416 }} 416w,{% endif %},
-                      {{ featured_media.preview_image | image_url }} {{ media.preview_image.width }}w"
-                      src="{{ featured_media | image_url: width: 416 }}"
-                      sizes="(min-width: {{ settings.page_width }}px) calc(({{ settings.page_width | minus: 100 | times: media_width | round }} - 4rem) / 4), (min-width: 990px) calc(({{ media_width | times: 100 }}vw - 4rem) / 4), (min-width: 750px) calc((100vw - 15rem) / 8), calc((100vw - 14rem) / 3)"
-                      alt="{{ featured_media.alt | escape }}"
-                      height="208"
-                      width="208"
-                      loading="lazy"
-                    >
-                  </button>
-                </li>
-              {%- endif -%}
-              {%- for media in product.media -%}
-                {%- unless media.id == product.selected_or_first_available_variant.featured_media.id -%}
-                  {%- liquid
-                    capture media_index
-                      if media.media_type == 'model'
-                        increment model_index
-                      elsif media.media_type == 'video' or media.media_type == 'external_video'
-                        increment video_index
-                      elsif media.media_type == 'image'
-                        increment image_index
-                      endif
-                    endcapture
-                    assign media_index = media_index | plus: 1
-                  -%}
-                   <li id="Slide-Thumbnails-{{ section.id }}-{{ forloop.index }}" class="thumbnail-list__item slider__slide{% if section.settings.hide_variants and variant_images contains media.src %} thumbnail-list_item--variant{% endif %}" data-target="{{ section.id }}-{{ media.id }}"  data-media-position="{{ media_index }}">
-                    {%- if media.media_type == 'model' -%}
-                      <span class="thumbnail__badge" aria-hidden="true">
-                        {%- render 'icon-3d-model' -%}
-                      </span>
-                    {%- elsif media.media_type == 'video' or media.media_type == 'external_video' -%}
-                      <span class="thumbnail__badge" aria-hidden="true">
-                        {%- render 'icon-play' -%}
-                      </span>
-                    {%- endif -%}
-                    <button class="thumbnail global-media-settings global-media-settings--no-shadow {% if media.preview_image.aspect_ratio > 1 %}thumbnail--wide{% else %}thumbnail--narrow{% endif %}"
-                      aria-label="{%- if media.media_type == 'image' -%}{{ 'products.product.media.load_image' | t: index: media_index }}{%- elsif media.media_type == 'model' -%}{{ 'products.product.media.load_model' | t: index: media_index }}{%- elsif media.media_type == 'video' or media.media_type == 'external_video' -%}{{ 'products.product.media.load_video' | t: index: media_index }}{%- endif -%}"
-                      {% if media == product.selected_or_first_available_variant.featured_media or product.selected_or_first_available_variant.featured_media == null and forloop.index == 1 %} aria-current="true"{% endif %}
-                      aria-controls="GalleryViewer-{{ section.id }}"
-                      aria-describedby="Thumbnail-{{ section.id }}-{{ forloop.index }}"
-                    >
-                      <img id="Thumbnail-{{ section.id }}-{{ forloop.index }}"
-                        srcset="{% if media.preview_image.width >= 59 %}{{ media.preview_image | image_url: width: 59 }} 59w,{% endif %}
-                                {% if media.preview_image.width >= 118 %}{{ media.preview_image | image_url: width: 118 }} 118w,{% endif %}
-                                {% if media.preview_image.width >= 84 %}{{ media.preview_image | image_url: width: 84 }} 84w,{% endif %}
-                                {% if media.preview_image.width >= 168 %}{{ media.preview_image | image_url: width: 168 }} 168w,{% endif %}
-                                {% if media.preview_image.width >= 130 %}{{ media.preview_image | image_url: width: 130 }} 130w,{% endif %}
-                                {% if media.preview_image.width >= 260 %}{{ media.preview_image | image_url: width: 260 }} 260w{% endif %}"
-                        src="{{ media | image_url: width: 84, height: 84 }}"
-                        sizes="(min-width: 1200px) calc((1200px - 19.5rem) / 12), (min-width: 750px) calc((100vw - 16.5rem) / 8), calc((100vw - 8rem) / 5)"
-                        alt="{{ media.alt | escape }}"
-                        height="200"
-                        width="200"
-                        loading="lazy"
-                      >
-                    </button>
-                  </li>
-                {%- endunless -%}
-              {%- endfor -%}
-            </ul>
-            <button type="button" class="slider-button slider-button--next{% if media_count <= 3 %} small-hide{% endif %}{% if media_count <= 4 %} medium-hide large-up-hide{% endif %}" name="next" aria-label="{{ 'general.slider.next_slide' | t }}" aria-controls="GalleryThumbnails-{{ section.id }}" data-step="3">{% render 'icon-caret' %}</button>
-          </slider-component>
-        {%- endif -%}
-      </media-gallery>
-    </div>
-    <div class="product__info-wrapper grid__item{% if settings.page_width > 1400 and section.settings.media_size == "small" %} product__info-wrapper--extra-padding{% endif %}">
-      <div id="ProductInfo-{{ section.id }}" class="product__info-container{% if section.settings.enable_sticky_info %} product__info-container--sticky{% endif %}">
-        {%- assign product_form_id = 'product-form-' | append: section.id -%}
-
-        {%- for block in section.blocks -%}
-          {%- case block.type -%}
-          {%- when '@app' -%}
-            {% render block %}
-          {%- when 'text' -%}
-            <p class="product__text{% if block.settings.text_style == 'uppercase' %} caption-with-letter-spacing{% elsif block.settings.text_style == 'subtitle' %} subtitle{% endif %}" {{ block.shopify_attributes }}>
-              {{- block.settings.text -}}
-            </p>
-          {%- when 'title' -%}
-            <div class="product__title" {{ block.shopify_attributes }}>
-              <h1>{{ product.title | escape }}</h1>
-              <a href="{{ product.url }}" class="product__title">
-                <h2 class="h1">
-                  {{ product.title | escape }}
-                </h2>
-              </a>
-            </div>
-          {%- when 'price' -%}
-            <div class="no-js-hidden" id="price-{{ section.id }}" role="status" {{ block.shopify_attributes }}>
-              {%- render 'price', product: product, use_variant: true, show_badges: true, price_class: 'price--large' -%}
-            </div>
-            {%- if shop.taxes_included or shop.shipping_policy.body != blank -%}
-              <div class="product__tax caption rte">
-                {%- if shop.taxes_included -%}
-                  {{ 'products.product.include_taxes' | t }}
-                {%- endif -%}
-                {%- if shop.shipping_policy.body != blank -%}
-                  {{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
-                {%- endif -%}
-              </div>
-            {%- endif -%}
-            <div {{ block.shopify_attributes }}>
-              {%- assign product_form_installment_id = 'product-form-installment-' | append: section.id -%}
-              {%- form 'product', product, id: product_form_installment_id, class: 'installment caption-large' -%}
-                <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-                {{ form | payment_terms }}
-              {%- endform -%}
-            </div>
-          {%- when 'description' -%}
-            {%- if product.description != blank -%}
-              <div class="product__description rte quick-add-hidden">
-                {{ product.description }}
-              </div>
-            {%- endif -%}
-          {%- when 'custom_liquid' -%}
-            {{ block.settings.custom_liquid }}
-          {%- when 'collapsible_tab' -%}
-            <div class="product__accordion accordion quick-add-hidden" {{ block.shopify_attributes }}>
-              <details id="Details-{{ block.id }}-{{ section.id }}">
-                <summary>
-                  <div class="summary__title">
-                    {% render 'icon-accordion', icon: block.settings.icon %}
-                    <h2 class="h4 accordion__title">
-                      {{ block.settings.heading | default: block.settings.page.title }}
-                    </h2>
-                  </div>
-                  {% render 'icon-caret' %}
-                </summary>
-                <div class="accordion__content rte" id="ProductAccordion-{{ block.id }}-{{ section.id }}">
-                  {{ block.settings.content }}
-                  {{ block.settings.page.content }}
-                </div>
-              </details>
-            </div>
-          {%- when 'quantity_selector' -%}
-            <div class="product-form__input product-form__quantity{% if settings.inputs_shadow_vertical_offset != 0 and settings.inputs_shadow_vertical_offset < 0 %} product-form__quantity-top{% endif %}" {{ block.shopify_attributes }}>
-              <label class="form__label" for="Quantity-{{ section.id }}">
-                {{ 'products.product.quantity.label' | t }}
-              </label>
-
-              <quantity-input class="quantity">
-                <button class="quantity__button no-js-hidden" name="minus" type="button">
-                  <span class="visually-hidden">{{ 'products.product.quantity.decrease' | t: product: product.title | escape }}</span>
-                  {% render 'icon-minus' %}
-                </button>
-                <input class="quantity__input"
-                    type="number"
-                    name="quantity"
-                    id="Quantity-{{ section.id }}"
-                    min="1"
-                    value="1"
-                    form="{{ product_form_id }}"
-                  >
-                <button class="quantity__button no-js-hidden" name="plus" type="button">
-                  <span class="visually-hidden">{{ 'products.product.quantity.increase' | t: product: product.title | escape }}</span>
-                  {% render 'icon-plus' %}
-                </button>
-              </quantity-input>
-            </div>
-          {%- when 'popup' -%}
-              <modal-opener class="product-popup-modal__opener no-js-hidden quick-add-hidden" data-modal="#PopupModal-{{ block.id }}" {{ block.shopify_attributes }}>
-                <button id="ProductPopup-{{ block.id }}" class="product-popup-modal__button link" type="button" aria-haspopup="dialog">{{ block.settings.text | default: block.settings.page.title }}</button>
-              </modal-opener>
-              <a href="{{ block.settings.page.url }}" class="product-popup-modal__button link no-js">{{ block.settings.text }}</a>
-          {%- when 'share' -%}
-            <share-button id="Share-{{ section.id }}" class="share-button quick-add-hidden" {{ block.shopify_attributes }}>
-              <button class="share-button__button hidden">
-                {% render 'icon-share' %}
-                {{ block.settings.share_label | escape }}
-              </button>
-              <details id="Details-{{ block.id }}-{{ section.id }}">
-                <summary class="share-button__button">
-                  {% render 'icon-share' %}
-                  {{ block.settings.share_label | escape }}
-                </summary>
-                <div id="Product-share-{{ section.id }}" class="share-button__fallback motion-reduce">
-                  <div class="field">
-                    <span id="ShareMessage-{{ section.id }}" class="share-button__message hidden" role="status">
-                    </span>
-                    <input type="text"
-                          class="field__input"
-                          id="url"
-                          value="{{ product.selected_variant.url | default: product.url | prepend: request.origin }}"
-                          placeholder="{{ 'general.share.share_url' | t }}"
-                          onclick="this.select();"
-                          readonly
-                    >
-                    <label class="field__label" for="url">{{ 'general.share.share_url' | t }}</label>
-                  </div>
-                  <button class="share-button__close hidden no-js-hidden">
-                    {% render 'icon-close' %}
-                    <span class="visually-hidden">{{ 'general.share.close' | t }}</span>
-                  </button>
-                  <button class="share-button__copy no-js-hidden">
-                    {% render 'icon-clipboard' %}
-                    <span class="visually-hidden">{{ 'general.share.copy_to_clipboard' | t }}</span>
-                  </button>
-                </div>
-              </details>
-            </share-button>
-            <script src="{{ 'share.js' | asset_url }}" defer="defer"></script>
-          {%- when 'variant_picker' -%}
-            {%- unless product.has_only_default_variant -%}
-              {%- if block.settings.picker_type == 'button' -%}
-                <variant-radios class="no-js-hidden" data-section="{{ section.id }}" data-url="{{ product.url }}" {{ block.shopify_attributes }}>
-                  {%- for option in product.options_with_values -%}
-                      <fieldset class="js product-form__input">
-                        <legend class="form__label">{{ option.name }}</legend>
-                        {%- for value in option.values -%}
-                          <input type="radio" id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
-                                name="{{ option.name }}"
-                                value="{{ value | escape }}"
-                                form="{{ product_form_id }}"
-                                {% if option.selected_value == value %}checked{% endif %}
-                          >
-                          <label for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}">
-                            {{ value }}
-                          </label>
-                        {%- endfor -%}
-                      </fieldset>
-                  {%- endfor -%}
-                  <script type="application/json">
-                    {{ product.variants | json }}
-                  </script>
-                </variant-radios>
-              {%- else -%}
-                <variant-selects class="no-js-hidden" data-section="{{ section.id }}" data-url="{{ product.url }}" {{ block.shopify_attributes }}>
-                  {%- for option in product.options_with_values -%}
-                    <div class="product-form__input product-form__input--dropdown">
-                      <label class="form__label" for="Option-{{ section.id }}-{{ forloop.index0 }}">
-                        {{ option.name }}
-                      </label>
-                      <div class="select">
-                        <select id="Option-{{ section.id }}-{{ forloop.index0 }}"
-                          class="select__select"
-                          name="options[{{ option.name | escape }}]"
-                          form="{{ product_form_id }}"
-                        >
-                          {%- for value in option.values -%}
-                            <option value="{{ value | escape }}" {% if option.selected_value == value %}selected="selected"{% endif %}>
-                              {{ value }}
-                            </option>
-                          {%- endfor -%}
-                        </select>
-                        {% render 'icon-caret' %}
-                      </div>
-                    </div>
-                  {%- endfor -%}
-
-                  <script type="application/json">
-                    {{ product.variants | json }}
-                  </script>
-                </variant-selects>
-              {%- endif -%}
-            {%- endunless -%}
-
-            <noscript class="product-form__noscript-wrapper-{{ section.id }}">
-              <div class="product-form__input{% if product.has_only_default_variant %} hidden{% endif %}">
-                <label class="form__label" for="Variants-{{ section.id }}">{{ 'products.product.product_variants' | t }}</label>
-                <div class="select">
-                  <select name="id" id="Variants-{{ section.id }}" class="select__select" form="{{ product_form_id }}">
-                    {%- for variant in product.variants -%}
-                      <option
-                        {% if variant == product.selected_or_first_available_variant %}selected="selected"{% endif %}
-                        {% if variant.available == false %}disabled{% endif %}
-                        value="{{ variant.id }}"
-                      >
-                        {{ variant.title }}
-                        {%- if variant.available == false %} - {{ 'products.product.sold_out' | t }}{% endif %}
-                        - {{ variant.price | money | strip_html }}
-                      </option>
-                    {%- endfor -%}
-                  </select>
-                  {% render 'icon-caret' %}
-                </div>
-              </div>
-            </noscript>
-          {%- when 'buy_buttons' -%}
-            <div {{ block.shopify_attributes }}>
-              <product-form class="product-form" data-cart-type="{{ settings.cart_type }}">
-                <div class="product-form__error-message-wrapper" role="alert" hidden>
-                  <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-error" viewBox="0 0 13 13">
-                    <circle cx="6.5" cy="6.50049" r="5.5" stroke="white" stroke-width="2"/>
-                    <circle cx="6.5" cy="6.5" r="5.5" fill="#EB001B" stroke="#EB001B" stroke-width="0.7"/>
-                    <path d="M5.87413 3.52832L5.97439 7.57216H7.02713L7.12739 3.52832H5.87413ZM6.50076 9.66091C6.88091 9.66091 7.18169 9.37267 7.18169 9.00504C7.18169 8.63742 6.88091 8.34917 6.50076 8.34917C6.12061 8.34917 5.81982 8.63742 5.81982 9.00504C5.81982 9.37267 6.12061 9.66091 6.50076 9.66091Z" fill="white"/>
-                    <path d="M5.87413 3.17832H5.51535L5.52424 3.537L5.6245 7.58083L5.63296 7.92216H5.97439H7.02713H7.36856L7.37702 7.58083L7.47728 3.537L7.48617 3.17832H7.12739H5.87413ZM6.50076 10.0109C7.06121 10.0109 7.5317 9.57872 7.5317 9.00504C7.5317 8.43137 7.06121 7.99918 6.50076 7.99918C5.94031 7.99918 5.46982 8.43137 5.46982 9.00504C5.46982 9.57872 5.94031 10.0109 6.50076 10.0109Z" fill="white" stroke="#EB001B" stroke-width="0.7">
-                  </svg>
-                  <span class="product-form__error-message"></span>
-                </div>
-
-                {%- form 'product', product, id: product_form_id, class: 'form', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
-                  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" disabled>
-                  <div class="product-form__buttons">
-                    <button
-                      type="submit"
-                      name="add"
-                      class="product-form__submit button button--full-width {% if block.settings.show_dynamic_checkout and product.selling_plan_groups == empty %}button--secondary{% else %}button--primary{% endif %}"
-                      {% if product.selected_or_first_available_variant.available == false %}disabled{% endif %}
-                    >
-                        <span>
-                          {%- if product.selected_or_first_available_variant.available -%}
-                            {{ 'products.product.add_to_cart' | t }}
-                          {%- else -%}
-                            {{ 'products.product.sold_out' | t }}
-                          {%- endif -%}
-                        </span>
-                        <div class="loading-overlay__spinner hidden">
-                          <svg aria-hidden="true" focusable="false" role="presentation" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
-                            <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
-                          </svg>
-                        </div>
-                    </button>
-                    {%- if block.settings.show_dynamic_checkout -%}
-                      {{ form | payment_button }}
-                    {%- endif -%}
-                  </div>
-                {%- endform -%}
-              </product-form>
-
-              {{ 'component-pickup-availability.css' | asset_url | stylesheet_tag }}
-
-              {%- assign pick_up_availabilities = product.selected_or_first_available_variant.store_availabilities | where: 'pick_up_enabled', true -%}
-
-              <pickup-availability class="product__pickup-availabilities no-js-hidden quick-add-hidden"
-                {% if product.selected_or_first_available_variant.available and pick_up_availabilities.size > 0 %} available{% endif %}
-                data-root-url="{{ routes.root_url }}"
-                data-variant-id="{{ product.selected_or_first_available_variant.id }}"
-                data-has-only-default-variant="{{ product.has_only_default_variant }}"
-              >
-                <template>
-                  <pickup-availability-preview class="pickup-availability-preview">
-                    {% render 'icon-unavailable' %}
-                    <div class="pickup-availability-info">
-                      <p class="caption-large">{{ 'products.product.pickup_availability.unavailable' | t }}</p>
-                      <button class="pickup-availability-button link link--text underlined-link">{{ 'products.product.pickup_availability.refresh' | t }}</button>
-                    </div>
-                  </pickup-availability-preview>
-                </template>
-              </pickup-availability>
-            </div>
-
-            <script src="{{ 'pickup-availability.js' | asset_url }}" defer="defer"></script>
-          {%- when 'rating' -%}
-            {%- if product.metafields.reviews.rating.value != blank -%}
-              {% liquid
-               assign rating_decimal = 0
-               assign decimal = product.metafields.reviews.rating.value.rating | modulo: 1
-               if decimal >= 0.3 and decimal <= 0.7
-                assign rating_decimal = 0.5
-              elsif decimal > 0.7
-                assign rating_decimal = 1
-               endif
-              %}
-              <div class="rating" role="img" aria-label="{{ 'accessibility.star_reviews_info' | t: rating_value: product.metafields.reviews.rating.value, rating_max: product.metafields.reviews.rating.value.scale_max }}">
-                <span aria-hidden="true" class="rating-star color-icon-{{ settings.accent_icons }}" style="--rating: {{ product.metafields.reviews.rating.value.rating | floor }}; --rating-max: {{ product.metafields.reviews.rating.value.scale_max }}; --rating-decimal: {{ rating_decimal }};"></span>
-              </div>
-              <p class="rating-text caption">
-                <span aria-hidden="true">{{ product.metafields.reviews.rating.value }} / {{ product.metafields.reviews.rating.value.scale_max }}</span>
-              </p>
-              <p class="rating-count caption">
-                <span aria-hidden="true">({{ product.metafields.reviews.rating_count }})</span>
-                <span class="visually-hidden">{{ product.metafields.reviews.rating_count }} {{ "accessibility.total_reviews" | t }}</span>
-              </p>
-            {%- endif -%}
-          {%- endcase -%}
-        {%- endfor -%}
-        <a href="{{ product.url }}" class="link product__view-details animate-arrow">
-          {{ 'products.product.view_full_details' | t }}
-          {% render 'icon-arrow' %}
-        </a>
-      </div>
+<section id="MainProduct-{{ section.id }}" data-section="{{ section.id }}">
+  <div class="fixed top-1/2 -translate-y-1/2 right-0">
+    <div class="flex flex-col items-center px-[24px] space-y-[32px] text-black text-center">
+      <a href="#content-description">
+        <span class="block text-[16px]">Sa</span>
+        <span class="block text-[24px]">Description</span>
+      </a>
+      <div class="h-[80px] w-[1px] bg-black rounded-full text-[0px]">.</div>
+      <a href="#content-degustation">
+        <span class="block text-[16px]">Sa</span>
+        <span class="block text-[24px]">Dégustation</span>
+      </a>
+      <div class="h-[80px] w-[1px] bg-black rounded-full text-[0px]">.</div>
+      <a href="#content-histoire">
+        <span class="block text-[16px]">Son</span>
+        <span class="block text-[24px]">Histoire</span>
+      </a>
     </div>
   </div>
-
-  <product-modal id="ProductModal-{{ section.id }}" class="product-media-modal media-modal">
-    <div class="product-media-modal__dialog" role="dialog" aria-label="{{ 'products.modal.label' | t }}" aria-modal="true" tabindex="-1">
-      <button id="ModalClose-{{ section.id }}" type="button" class="product-media-modal__toggle" aria-label="{{ 'accessibility.close' | t }}">{% render 'icon-close' %}</button>
-
-      <div class="product-media-modal__content gradient" role="document" aria-label="{{ 'products.modal.label' | t }}" tabindex="0">
-        {%- liquid
-          if product.selected_or_first_available_variant.featured_media != null
-            assign media = product.selected_or_first_available_variant.featured_media
-            render 'product-media', media: media, loop: section.settings.enable_video_looping, variant_image: section.settings.hide_variants
-          endif
-        -%}
-
-        {%- for media in product.media -%}
-          {%- liquid
-            if section.settings.hide_variants and variant_images contains media.src
-              assign variant_image = true
-            else
-              assign variant_image = false
-            endif
-
-            unless media.id == product.selected_or_first_available_variant.featured_media.id
-              render 'product-media', media: media, loop: section.settings.enable_video_looping, variant_image: variant_image
-            endunless
-          -%}
-        {%- endfor -%}
-      </div>
+  <div class="max-w-content mx-auto pl-[24px] pr-[180px] 3xl:pr-[24px]">
+    <div id="content-description" class="min-h-screen flex flex-col py-[56px]">
+      <nav class="flex flex-none justify-center items-center space-x-[8px] text-gray-medium">
+        <a href="/">Accueil</a>
+        <span>—</span>
+        <a href="#">Cave exclusive</a>
+        <span>—</span>
+        <a href="#" class="text-black">Philtre sauvage</a>
+      </nav>
+      <section class="flex flex-auto items-center justify-between py-[64px]">
+        <div class="max-w-[470px] flex-none">
+          <h2 class="text-[96px] font-serif">{{ product.title | escape }}</h2>
+          <p class="mt-[18px] space-x-[16px] text-black font-medium">
+            <span class="text-[70px]">{{ product.price | money_with_currency }}</span>
+            <span class="text-[42px]">(en stock)</span>
+          </p>
+          <p class="my-[42px] text-[24px] text-gray-dark">{{ product.description | escape }}</p>
+          <div class="w-[128px] flex items-center border border-green-light rounded-full font-medium">
+            <button class="w-[40px] h-[40px] flex-none">–</button>
+            <p class="flex-auto text-center">1</p>
+            <button class="w-[40px] h-[40px] flex-none">+</button>
+          </div>
+          <div class="flex mt-[28px]">
+            <a href="#" class="px-[32px] py-[12px] bg-red rounded-full text-white">Acheter cette bouteille</a>
+          </div>
+        </div>
+        <div class="relative max-w-[560px]">
+          <svg width="566" height="613" viewBox="0 0 566 613" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M154.458 38.8426C152.723 39.0697 150.989 39.2967 149.243 39.5145C151 39.4002 152.734 39.1732 154.458 38.8426Z" fill="#CC2F37"/>
+            <path d="M196.85 540.445L194.138 538.175C191.973 541.079 189.742 543.928 187.489 546.758C188.768 547.075 190.055 547.359 191.332 547.655C193.201 545.276 195.047 542.879 196.85 540.445Z" fill="#CC2F37"/>
+            <path d="M154.599 505.078C150.422 513.467 145.989 521.717 141.331 529.835C142.286 530.314 143.223 530.816 144.187 531.283C148.708 523.39 153.088 515.397 157.159 507.24L154.59 505.09L154.599 505.078Z" fill="#CC2F37"/>
+            <path d="M49.0724 416.742L46.5144 414.6C43.2865 419.709 40.1335 424.861 37.0225 430.029C37.6549 431.163 38.2498 432.321 38.902 433.452C39.9626 431.698 41.0122 429.936 42.0617 428.173C44.3685 424.331 46.7304 420.535 49.0812 416.73L49.0724 416.742Z" fill="#CC2F37"/>
+            <path d="M90.0882 451.076C85.5299 461.466 80.6208 471.676 75.2508 481.613C76.0291 482.415 76.845 483.193 77.6321 483.983C83.075 473.975 88.0591 463.715 92.6903 453.254L90.0771 451.066L90.0882 451.076Z" fill="#CC2F37"/>
+            <path d="M133.794 487.662C129.505 497.844 124.987 507.947 119.988 517.873C120.914 518.46 121.823 519.07 122.747 519.636C127.689 509.925 132.247 500.006 136.56 489.958L133.803 487.65L133.794 487.662Z" fill="#CC2F37"/>
+            <path d="M86.9069 156.994C89.8407 155.564 92.8604 154.186 95.9243 152.846L100.024 147.524C99.2161 147.867 98.3928 148.158 97.5761 148.512C77.4139 157.217 57.475 168.032 42.0774 184.442C35.3768 191.586 29.6179 199.462 24.3199 207.705C22.0626 213.154 19.9818 218.657 18.1194 224.229C20.3048 220.38 22.5233 216.558 24.852 212.829C40.5943 187.521 60.8542 169.767 86.9091 157.015L86.9069 156.994Z" fill="#CC2F37"/>
+            <path d="M135.862 101.003L138.787 97.2065C131.508 98.792 124.217 100.253 116.947 101.45C113.46 102.021 109.969 102.551 106.453 103.042C104.605 104.382 102.757 105.721 100.944 107.109C102.878 106.86 104.8 106.601 106.7 106.324C116.441 104.932 126.172 103.059 135.851 100.994L135.862 101.003Z" fill="#CC2F37"/>
+            <path d="M169.244 33.656C164.515 36.0744 159.549 37.8599 154.449 38.854C165.988 37.364 177.444 35.6531 188.449 32.7153L191.515 28.7354C184.293 30.859 176.822 32.4347 169.235 33.6674L169.244 33.656Z" fill="#CC2F37"/>
+            <path d="M144.79 36.9373C144.101 37.8319 144.682 39.7144 146.2 39.7212C147.226 39.7311 148.226 39.587 149.234 39.5256C150.98 39.3078 152.715 39.0807 154.449 38.8537C159.541 37.871 164.507 36.0855 169.244 33.6556C161.143 34.9673 152.935 35.9453 144.79 36.9373Z" fill="#CC2F37"/>
+            <path d="M447.125 431.513C443.183 438.513 438.893 445.355 434.214 452.04C439.658 446.316 443.845 438.973 447.125 431.513Z" fill="#CC2F37"/>
+            <path d="M477.842 336.787C485.476 327.349 493.951 319.408 496.806 306.403C502.577 280.124 489.65 256.342 474.115 236.792C471.995 234.13 469.761 231.355 467.44 228.601C478.507 263.39 482.09 300.386 477.842 336.787Z" fill="#CC2F37"/>
+            <path d="M219.774 552.334C216.371 551.995 212.962 551.594 209.573 551.097L216.762 557.115C216.941 556.812 217.131 556.518 217.31 556.215C218.117 554.909 218.956 553.631 219.774 552.334Z" fill="#CC2F37"/>
+            <path d="M327.679 186.561C305.998 207.313 283.973 228.419 274.233 258.318C252.573 324.762 256.066 397.282 234.095 463.541C224.831 491.48 210.807 515.83 194.138 538.175L196.85 540.445C208.555 524.756 218.986 508.038 227.291 489.653C256.536 424.993 254.408 350.654 270.959 282.273C275.693 262.709 281.5 244.554 293.197 228.216C303.714 213.551 316.877 201.29 329.794 188.973C331.929 186.93 333.93 184.757 336.03 182.666C334.01 184.182 331.979 185.689 329.901 187.138C329.003 187.763 328.109 187.298 327.679 186.561Z" fill="#CC2F37"/>
+            <path d="M335.314 179.124C341.766 174.186 347.984 168.939 354.118 163.566C367.776 148.285 380.585 132.199 392.647 115.412C392.673 115.377 392.7 115.343 392.726 115.309C392.032 114.727 391.381 114.088 390.676 113.498C390.543 113.387 390.422 113.285 390.301 113.184C373.743 136.584 355.569 159.14 335.323 179.112L335.314 179.124Z" fill="#CC2F37"/>
+            <path d="M211.975 342.903C222.863 311.701 237.064 281.801 254.417 253.955C271.125 227.134 290.645 202.29 312.063 179.431C334.022 155.987 356.128 133.176 374.306 106.284C375.105 105.104 375.85 103.879 376.639 102.69C375.779 102.064 374.899 101.441 374.03 100.827C357.73 125.612 338.181 147.81 317.702 168.908C296.417 190.841 276.738 214.363 259.631 239.982C242.967 264.934 228.751 291.651 217.353 319.654C205.304 349.279 197.973 379.818 189.932 410.762C181.428 443.507 169.538 475.115 154.597 505.056L157.166 507.207C168.076 485.418 177.372 462.732 184.907 439.344C195.158 407.533 200.954 374.465 211.973 342.882L211.975 342.903Z" fill="#CC2F37"/>
+            <path d="M107.372 317.731C118.832 303.044 131.497 288.063 144.817 275.197C154.361 265.962 165.261 258.523 176.04 250.981C181.01 245.142 186.405 239.716 192.426 234.984C193.994 233.749 195.709 236.185 194.361 237.51C203.061 230.925 211.646 224.208 220.144 217.342C223.643 212.612 227.403 208.061 231.552 203.781C232.983 202.3 235.462 204.356 234.011 205.839C233.912 205.945 233.834 206.069 233.715 206.176C257.138 186.694 279.755 166.14 300.379 143.465C317.06 125.13 333.852 105.851 348.165 85.0817C347.197 84.573 346.233 84.1057 345.256 83.6084C334.499 99.243 322.4 113.961 310.171 127.74C287.391 153.402 263.168 177.196 237.099 199.218C212.09 220.335 185.834 239.257 159.639 258.664C148.056 267.25 138.476 277.096 128.871 287.94C117.406 300.869 105.467 313.495 95.9623 328.14C87.3569 341.406 80.882 356.191 73.461 370.203C66.04 384.215 57.6687 397.319 49.059 410.543C48.1863 411.888 47.3666 413.258 46.5137 414.6L49.0717 416.742C59.4496 399.998 70.1096 383.547 79.2789 365.923C87.92 349.291 95.8595 332.487 107.372 317.731Z" fill="#CC2F37"/>
+            <path d="M149.929 299.191C160.852 276.3 174.39 253.241 194.275 237.645C194.331 237.597 194.304 237.537 194.359 237.489C190.191 240.64 186.071 243.87 181.818 246.894C179.913 248.261 177.966 249.612 176.038 250.96C166.163 262.579 158.114 275.97 151.123 289.588C139.826 311.599 131.034 334.972 123.437 358.628C113.432 389.815 103.186 421.195 90.0857 451.055L92.6988 453.242C104.961 425.53 114.751 396.484 123.927 367.528C131.32 344.229 139.421 321.165 149.926 299.17L149.929 299.191Z" fill="#CC2F37"/>
+            <path d="M192.426 234.984C186.405 239.716 181.01 245.142 176.04 250.981C177.967 249.632 179.906 248.293 181.82 246.915C186.061 243.881 190.193 240.66 194.361 237.509C195.7 236.196 193.996 233.77 192.426 234.984Z" fill="#CC2F37"/>
+            <path d="M171.727 377.187C177.956 348.971 182.844 320.426 190.457 292.557C199.049 261.111 211.153 229.626 233.703 206.168C230.72 208.651 227.763 211.194 224.756 213.639C223.219 214.88 221.669 216.092 220.132 217.333C192.098 255.161 183.094 306.353 173.783 351.987C164.253 398.683 152.048 444.214 133.793 487.662L136.549 489.969C140.336 481.122 143.976 472.207 147.279 463.163C157.485 435.201 165.284 406.337 171.727 377.187Z" fill="#CC2F37"/>
+            <path d="M231.541 203.772C227.4 208.041 223.643 212.612 220.133 217.333C221.669 216.092 223.219 214.88 224.756 213.639C227.772 211.183 230.72 208.651 233.703 206.168C233.803 206.062 233.88 205.938 233.999 205.831C235.439 204.338 232.972 202.291 231.541 203.772Z" fill="#CC2F37"/>
+            <path d="M314.385 74.7837C275.153 117.613 218.156 133.687 169.136 160.57C122.016 186.401 79.5263 220.581 51.2326 268.303C42.4494 283.118 35.1859 298.998 24.7354 312.681C19.1491 320.004 12.7621 326.788 6.38633 333.393C6.54848 334.83 6.77022 336.261 6.9412 337.687C17.3736 327.252 27.1955 315.891 34.9086 303.501C43.4636 289.759 50.3953 275.017 59.2304 261.453C67.4778 248.793 76.7793 236.883 87.0157 225.926C107.102 204.442 130.67 186.892 155.605 172.014C181.091 156.824 207.937 144.433 234.782 132.116C260.525 120.31 285.758 106.531 306.853 86.8917C311.601 82.4708 316.137 77.7595 320.395 72.7967C319.308 72.3957 318.218 71.974 317.113 71.596C316.19 72.6531 315.319 73.7358 314.354 74.7767L314.385 74.7837Z" fill="#CC2F37"/>
+            <path d="M226.538 101.784C185.555 120.471 141.424 130.015 100.033 147.512L95.9335 152.834C157.041 125.939 241.786 115.208 287.712 63.5491C286.315 63.2667 284.925 62.9522 283.522 62.702C267.365 79.5321 246.804 92.544 226.538 101.784Z" fill="#CC2F37"/>
+            <path d="M244.364 58.9382C242.462 58.9119 240.566 58.8533 238.671 58.8891C223.763 69.483 206.848 77.4337 190.993 82.7826C174.033 88.5077 156.438 93.3617 138.777 97.2177L135.853 101.014C151.988 97.5605 168.016 93.3755 183.727 88.5664C203.973 82.3661 225.976 72.7314 244.366 58.9589L244.364 58.9382Z" fill="#CC2F37"/>
+            <path d="M385.993 323.214C386.749 321.338 389.354 322.5 388.892 324.301C388.914 324.225 388.991 324.195 389.013 324.12C390.115 317.533 392.897 309.449 398.582 305.718C401.936 303.507 405.861 303.944 409.251 305.876C412.683 307.825 414.08 311.333 413.944 315.275C413.791 319.43 412.472 323.495 411.154 327.372C409.935 330.955 408.82 334.569 407.685 338.184C406.593 341.722 405.44 345.831 402.981 348.622C400.444 351.516 397.185 350.637 394.285 348.776C390.112 346.094 386.241 341.891 385.899 336.567C385.635 332.366 387.357 328.318 388.887 324.542C388.918 324.455 388.872 324.397 388.883 324.312C388.339 326.102 385.545 325.631 385.867 323.637C385.878 323.552 385.909 323.464 385.92 323.379C384.317 327.32 382.721 331.417 382.708 335.765C382.706 340.97 385.316 345.399 388.998 348.765C392.246 351.729 396.974 355.008 401.508 353.501C405.276 352.259 407.358 348.192 408.79 344.637C410.563 340.216 411.684 335.513 413.236 331.002C414.774 326.535 416.432 321.98 416.935 317.232C417.413 312.821 416.697 308.241 413.495 305.052C410.294 301.863 405.213 300.194 400.868 301.198C391.806 303.309 387.405 314.812 385.918 323.359C385.944 323.324 385.958 323.26 385.973 323.216L385.993 323.214Z" fill="#CC2F37"/>
+            <path d="M388.901 324.29C389.363 322.489 386.769 321.336 386.002 323.203C385.975 323.238 385.962 323.302 385.947 323.346C385.936 323.431 385.905 323.518 385.893 323.603C385.552 325.6 388.345 326.07 388.909 324.279L388.901 324.29Z" fill="#CC2F37"/>
+            <path d="M388.687 284.852C388.749 284.771 388.811 284.691 388.862 284.602C388.888 284.567 388.893 284.514 388.908 284.471C389.596 282.613 387.099 281.428 386.195 282.954C385.404 284.688 387.664 286.58 388.687 284.852Z" fill="#CC2F37"/>
+            <path d="M386.207 282.964C387.1 281.428 389.597 282.613 388.92 284.48C388.894 284.514 388.889 284.567 388.874 284.611C397.666 269.973 417.499 267.464 427.838 282.081C434.005 290.79 435.412 303.796 431.842 313.844C428.467 323.357 422.206 331.039 419.757 341.044C417.227 351.415 416.956 364.15 410.007 372.652C405.389 378.294 398.27 378.259 392.072 375.712C377.76 369.806 365.466 353.441 364.919 337.248C364.22 316.307 382.162 302.764 388.874 284.611C388.812 284.691 388.75 284.771 388.699 284.861C387.678 286.61 385.418 284.718 386.207 282.964C386.145 283.044 386.066 283.053 386.017 283.163C379.257 301.614 361.843 314.827 361.749 335.972C361.657 353.818 374.841 371.853 390.452 378.544C396.516 381.149 403.683 381.827 409.299 377.738C417.948 371.432 419.474 358.315 421.419 348.397C422.682 341.908 424.221 335.744 427.24 329.895C429.859 324.824 433.082 320.051 434.924 314.575C438.357 304.375 437.275 291.866 431.927 282.541C421.389 264.155 396.699 264.919 386.238 282.782C386.194 282.839 386.24 282.897 386.216 282.952L386.207 282.964Z" fill="#CC2F37"/>
+            <path d="M386.79 246.586C386.975 246.44 387.119 246.277 387.295 246.142C387.068 246.272 386.903 246.417 386.79 246.586Z" fill="#CC2F37"/>
+            <path d="M389.145 248.804C390.77 247.542 388.93 244.87 387.296 246.143C387.11 246.29 386.967 246.453 386.79 246.588C385.979 247.758 387.608 249.669 389.145 248.804Z" fill="#CC2F37"/>
+            <path d="M355.325 297.579C347.255 303.653 338.245 309.204 332.836 318.203C328.846 324.842 326.937 333.017 326.788 340.816C326.22 371.733 352.379 397.856 377.713 409.536C390.178 415.273 405.575 419.275 417.324 409.886C429.148 400.446 433.169 383.079 437.099 368.937C441.436 353.324 447.374 340.014 454.974 325.887C461.581 313.59 467.066 300.372 464.598 285.968C461.338 267.033 446.844 248.204 431.605 237.899C424.408 233.045 416.026 229.99 407.451 231.962C398.641 233.982 394.894 241.882 387.296 246.143C388.921 244.881 390.781 247.551 389.145 248.804C395.092 245.463 398.743 238.652 404.933 236.079C414.81 231.991 425.151 236.742 433.066 242.971C445.936 253.103 458.507 269.437 461.457 286.301C465.987 312.203 443.985 334.102 437.062 357.473C433.128 370.725 430.44 384.926 423.658 397.002C414.406 413.462 398.89 414.604 382.864 408.169C358.767 398.487 333.782 375.761 330.313 347.728C329.245 339.062 330.453 329.678 334.402 321.891C339.76 311.358 350.376 305.605 359.173 298.706C366.485 292.98 371.621 286.808 374.885 277.862C378.624 267.617 380.181 255.733 389.152 248.772C387.615 249.637 385.995 247.714 386.797 246.556C379.954 252.166 377.152 260.253 374.519 268.708C370.612 281.266 365.793 289.665 355.332 297.547L355.325 297.579Z" fill="#CC2F37"/>
+            <path d="M434.214 452.041C432.041 455.146 429.814 458.224 427.481 461.252C427.384 461.378 427.278 461.516 427.181 461.642C443.314 452.282 452.392 430.186 458.237 409.346C454.934 416.882 451.225 424.286 447.128 431.534C443.837 438.985 439.669 446.326 434.217 452.062L434.214 452.041Z" fill="#CC2F37"/>
+            <path d="M474.115 236.791C489.658 256.33 502.577 280.124 496.806 306.402C493.96 319.395 485.484 327.337 477.842 336.787C477.553 339.28 477.203 341.76 476.832 344.242C483.102 335.303 491.583 328.084 496.369 317.752C506.521 295.839 500.028 269.142 487.673 249.725C481.214 239.583 473.319 229.937 465.018 221.196C465.881 223.654 466.654 226.112 467.44 228.6C469.752 231.366 471.994 234.129 474.115 236.791Z" fill="#CC2F37"/>
+            <path d="M473.69 342.272C468.547 349.702 466.755 358.314 464.788 367.081C460.539 386.088 457.046 405.406 450.306 423.667C449.352 426.246 448.296 428.889 447.137 431.523C451.223 424.265 454.932 416.861 458.245 409.335C460.551 401.115 462.356 393.099 463.9 386.127C466.006 376.59 467.774 366.902 470.335 357.48C471.7 352.436 474.085 348.187 476.853 344.24C477.223 341.758 477.574 339.279 477.863 336.785C476.431 338.549 475.024 340.352 473.71 342.27L473.69 342.272Z" fill="#CC2F37"/>
+            <path d="M385.146 215.668C385.24 215.615 385.355 215.56 385.459 215.496C385.468 215.485 385.486 215.462 385.505 215.46C387.128 214.365 385.508 211.972 383.881 212.742C382.378 213.823 383.404 216.587 385.135 215.659L385.146 215.668Z" fill="#CC2F37"/>
+            <path d="M434.214 452.041C429.051 457.473 422.75 461.461 414.966 462.643C393.314 465.912 373.08 449.049 358.099 434.925C340.651 418.47 323.552 398.667 313.495 376.268C307.814 363.608 304.312 349.414 306.126 335.406C308.306 318.686 318.373 305.077 329.247 293.221C339.232 282.355 350.112 272.257 357.607 259.231C366.254 244.17 370.611 225.612 385.452 215.529C385.357 215.581 385.243 215.636 385.139 215.7C383.408 216.628 382.371 213.855 383.886 212.783C383.808 212.813 383.733 212.769 383.658 212.819C371.438 221.078 365.983 234.869 359.785 247.999C352.104 264.303 340.726 276.248 328.728 289.069C310.212 308.867 297.971 331.278 304.454 359.494C310.286 384.883 326.887 406.533 343.868 425.03C359.076 441.591 378.016 460.181 400.239 465.163C410.944 467.558 419.796 465.931 427.172 461.654C427.269 461.528 427.375 461.39 427.472 461.264C429.805 458.236 432.031 455.157 434.205 452.053L434.214 452.041Z" fill="#CC2F37"/>
+            <path d="M438.297 201.243C419.699 194.522 400.372 203.813 384.016 212.591C383.95 212.63 383.948 212.703 383.893 212.751C385.52 211.981 387.148 214.364 385.517 215.469C385.508 215.481 385.49 215.504 385.47 215.506C399.612 207.931 416.184 199.485 432.532 202.982C446.65 206.009 457.939 217.251 467.463 228.619C466.679 226.152 465.904 223.673 465.041 221.215C463.842 219.947 462.649 218.647 461.423 217.413C454.745 210.709 447.179 204.451 438.317 201.241L438.297 201.243Z" fill="#CC2F37"/>
+            <path d="M462.827 175.309C462.92 175.425 463.041 175.526 463.142 175.63C464.728 176.655 466.442 174.525 465.249 173.319C463.856 172.02 461.471 173.797 462.827 175.309Z" fill="#CC2F37"/>
+            <path d="M356.944 486.404C332.751 471.454 314.115 447.949 301.295 422.144C288.642 396.687 281.039 368.23 279.925 339.565C279.283 323.048 280.186 305.373 283.827 289.252C285.762 280.666 289.061 272.335 294.552 265.536C300.682 257.933 309.049 252.203 316.021 245.436C338.493 223.61 356.611 196.631 382.806 179.223C399.782 167.946 418.622 162.417 437.081 165.342C436.258 164.125 435.436 162.909 434.605 161.704C421.656 160.127 408.397 162.272 395.536 168.278C372.047 179.254 354.802 198.437 337.653 217.757C330.954 225.299 324.178 232.776 317.063 239.894C309.574 247.378 300.703 253.668 293.682 261.581C282.533 274.171 279.399 291.375 277.94 307.888C275.186 339.032 277.909 369.421 288.153 398.994C304.687 446.698 339.716 490.358 387.153 502.372C388.199 501.532 389.224 500.673 390.26 499.823C378.611 497.241 367.329 492.815 356.944 486.404Z" fill="#CC2F37"/>
+            <path d="M219.775 552.335C218.957 553.631 218.118 554.909 217.311 556.215C217.132 556.518 216.942 556.812 216.763 557.115L219.354 559.284C220.739 557.085 222.147 554.905 223.534 552.728C222.277 552.618 221.026 552.476 219.766 552.346L219.775 552.335Z" fill="#CC2F37"/>
+            <path d="M364.994 517.272C343.589 496.468 319.187 453.138 283.803 470.419C268.563 477.867 259.568 494.486 249.879 507.958C239.402 522.524 229.319 537.119 219.764 552.325C221.012 552.446 222.266 552.608 223.532 552.707C236.861 531.755 250.519 511.059 265.586 491.336C278.111 474.936 294.799 464.738 315.051 473.598C332.554 481.269 343.408 498.939 356.111 512.723C358.235 515.029 360.446 517.314 362.722 519.539C363.675 518.961 364.642 518.412 365.583 517.803C365.382 517.616 365.181 517.429 364.981 517.242L364.994 517.272Z" fill="#CC2F37"/>
+            <path d="M327.68 186.561C329.131 185.172 330.581 183.783 332.032 182.394C333.145 181.326 334.223 180.21 335.325 179.132C332.936 180.962 330.534 182.762 328.063 184.486C327.268 185.047 327.301 185.923 327.682 186.582L327.68 186.561Z" fill="#CC2F37"/>
+            <path d="M391.629 132.104C378.444 141.687 366.426 152.814 354.129 163.574C348.29 170.119 342.26 176.485 336.042 182.675C352.272 170.434 366.869 156.052 382.642 143.183C389.365 137.68 396.958 131.66 405.061 126.652C404.342 125.937 403.614 125.233 402.887 124.53C399.039 126.912 395.279 129.462 391.629 132.104Z" fill="#CC2F37"/>
+            <path d="M335.314 179.124C334.212 180.201 333.134 181.317 332.021 182.385C330.57 183.774 329.119 185.163 327.668 186.552C328.098 187.289 329.011 187.752 329.89 187.129C331.968 185.68 333.999 184.173 336.019 182.657C342.238 176.468 348.267 170.101 354.107 163.557C347.981 168.918 341.754 174.177 335.303 179.114L335.314 179.124Z" fill="#CC2F37"/>
+          </svg>        
+          <img
+            src="{{ product.featured_media | image_url: width: 1000 }}"
+            alt="{{ product.featured_media.alt | escape }}"
+            width="938"
+            height="722"
+            loading="lazy"
+            class="absolute top-1/2 left-[40%] -translate-x-1/2 -translate-y-1/2 -rotate-[12deg]"
+          />
+          <img
+            src="{{ 'custom-french-label.png' | asset_img_url: '192x' }}"
+            alt="Cave à vin"
+            width="192"
+            height="184"
+            loading="lazy"
+            class="absolute top-0 right-[20%]"
+          />
+          <img
+            src="{{ 'custom-grape.png' | asset_img_url: '304x' }}"
+            alt="Raisin"
+            width="304"
+            height="275"
+            loading="lazy"
+            class="absolute bottom-0 right-0 rotate-90"
+          />
+        </div>
+      </section>
     </div>
-  </product-modal>
-
-  {% assign popups = section.blocks | where: "type", "popup" %}
-  {%- for block in popups -%}
-    <modal-dialog id="PopupModal-{{ block.id }}" class="product-popup-modal" {{ block.shopify_attributes }}>
-      <div role="dialog" aria-label="{{ block.settings.text }}" aria-modal="true" class="product-popup-modal__content" tabindex="-1">
-        <button id="ModalClose-{{ block.id }}" type="button" class="product-popup-modal__toggle" aria-label="{{ 'accessibility.close' | t }}">{% render 'icon-close' %}</button>
-        <div class="product-popup-modal__content-info">
-          <h1 class="h2">{{ block.settings.page.title }}</h1>
-          {{ block.settings.page.content }}
+    <div id="content-degustation" class="min-h-screen flex items-center">
+      <section class="py-[64px]">
+        <h3 class="mb-[96px] text-[96px] font-serif">Sa degustation</h3>
+        <div class="active-grid grid-cols-2 gap-[96px]">
+          <article class="flex space-x-[16px]">
+            <figure class="h-[42px] w-[54px] flex-none">
+              <svg class="mx-auto" width="35" height="42" viewBox="0 0 35 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12.8707 4.72562C10.3912 8.59646 9.8639 10.151 9.95845 13.3154L10.0734 17.1795L10.5869 12.8377C11.0677 8.77831 15.0216 1.39364 16.6648 1.48582C18.3397 1.57968 31.8502 10.3337 31.8502 11.3242C31.8502 13.0581 28.5492 15.0845 25.7259 15.0845C23.8373 15.0845 22.3417 14.1601 19.6243 11.3133C17.6445 9.23923 15.3925 7.54223 14.619 7.54223C13.222 7.54223 11.7011 10.5692 12.6221 11.5161C12.887 11.7885 13.1038 11.3712 13.1038 10.5884C13.1038 7.54307 15.6158 8.15231 19.282 12.086C22.7778 15.837 23.1054 15.9937 26.968 15.754C30.895 15.5102 31.0458 15.4021 32.583 11.7516C33.4518 9.68841 33.9873 7.70816 33.7738 7.352C33.147 6.31033 31.9921 6.60531 31.706 7.88079C31.5169 8.72719 29.3146 7.78861 23.8414 4.52869C19.661 2.03808 16.1635 0 16.069 0C15.9744 0 14.535 2.12691 12.8707 4.72562ZM15.4446 4.81865C14.4315 6.14775 14.46 6.17708 15.7527 5.13542C17.1106 4.04012 17.5418 3.3521 16.871 3.3521C16.7023 3.3521 16.06 4.01246 15.4446 4.81865ZM33.7151 11.4156C34.5905 12.3156 30.4165 19.7933 27.7521 22.0987C24.8831 24.581 25.152 25.01 28.264 22.9133C29.3985 22.149 31.4028 19.3316 32.7183 16.6524C35.4153 11.1591 35.4813 10.8943 34.1593 10.8943C33.6369 10.8943 33.4363 11.129 33.7151 11.4156ZM12.3075 16.0675C12.2969 16.8384 13.4176 18.6301 14.7967 20.0481C16.1758 21.466 17.9184 22.6183 18.6682 22.6074C19.4442 22.5965 18.9201 22.025 17.4513 21.28C16.0323 20.5601 14.2987 18.7776 13.5985 17.3186C12.8739 15.8085 12.3181 15.2697 12.3075 16.0675ZM28.5541 18.5044C28.0553 19.464 26.483 20.7696 25.0616 21.4048C23.6401 22.0409 23.037 22.5756 23.7216 22.594C25.3705 22.6376 28.3667 20.4319 29.4271 18.3938C29.8949 17.4955 30.0938 16.7605 29.8696 16.7605C29.6455 16.7605 29.0538 17.5457 28.5541 18.5044ZM10.6586 18.4089C10.6586 18.7592 11.6473 20.0632 12.856 21.306L15.0542 23.5653L13.0598 27.3707C10.1475 32.9285 7.76348 34.6113 3.49581 34.121L0 33.7196L6.75606 37.7907C13.1698 41.6566 16.5433 43.1298 13.7681 40.8537C13.0663 40.278 12.0898 39.052 11.6 38.1301C10.8428 36.7072 10.7042 36.6711 10.683 37.8921C10.661 39.1894 10.3709 39.1559 7.72354 37.5502L4.78768 35.7694L7.11224 34.7797C9.06677 33.9467 9.52402 34.0012 9.99023 35.1216C10.4646 36.263 10.5526 36.2387 10.6015 34.954C10.6749 33.0241 13.5781 27.1671 15.3786 25.3159C16.6925 23.965 16.598 23.7102 13.7151 20.8274C12.0344 19.1464 10.6586 18.0578 10.6586 18.4089ZM19.4205 24.8944C20.4288 25.0938 22.0801 25.0938 23.0883 24.8944C24.0965 24.6941 23.2717 24.5307 21.2544 24.5307C19.2371 24.5307 18.4123 24.6941 19.4205 24.8944Z" fill="#CC2F37"/>
+              </svg>
+            </figure>
+            <div class="flex-auto pt-[4px] space-y-[12px]">
+              <h4 class="text-[24px] text-gray-dark font-medium font-sans uppercase">Couleur</h4>
+              <p class="text-[24px] text-gray-dark">Couleur profonde et sombre, bouche ample et douce, la « maquerelle » est fraîche.</p>
+            </div>
+          </article>
+          <article class="flex space-x-[16px]">
+            <figure class="h-[42px] w-[54px] flex-none">
+              <svg class="mx-auto" width="37" height="42" viewBox="0 0 37 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M2.22301 1.29401C1.00001 2.00542 0 3.26785 0 4.09977C0 5.53424 0.228007 5.54338 4.44501 4.28345C6.88901 3.55292 8.712 2.80826 8.496 2.62791C8.279 2.4484 6.65601 2.72016 4.88901 3.23211C3.12201 3.74407 1.412 3.94353 1.089 3.67592C-0.147995 2.64785 4.56599 0.831922 8.44099 0.843557C11.597 0.85353 12.166 1.05465 11 1.74695C9.834 2.43925 10.057 2.51655 12 2.09685C21.21 0.10472 27.864 0.61501 33.399 3.73659C36.761 5.63231 37 5.66223 37 4.1779C37 0.793693 33.485 0 18.5 0C7.398 0 3.97801 0.271766 2.22301 1.29401ZM34.557 2.00958C37.543 3.82385 35.884 4.12637 32.5 2.3844C30.769 1.49347 30.16 0.837738 31.059 0.835245C31.916 0.832751 33.491 1.36133 34.557 2.00958ZM24.105 4.39564C30.924 5.70129 35.699 8.06242 34.14 9.35809C33.375 9.99388 31.963 9.8368 29.231 8.81289C26.7 7.86462 23.711 7.48398 20.447 7.69342L15.5 8.01172L21 8.17378C24.025 8.26354 27.175 8.69903 28 9.14201C29.022 9.69053 26.471 9.9249 20 9.87752C13.722 9.83098 11.348 9.58165 13 9.14201C16.779 8.13639 13.058 8.19124 8.659 9.20683C4.152 10.2465 0.613 9.60658 3.028 8.18791C4.243 7.474 4.195 7.40419 2.75 7.79065C1.78 8.04995 1 7.83803 1 7.31527C1 6.79667 0.703004 6.61882 0.339005 6.9205C-0.0239955 7.22219 0.496003 8.2195 1.494 9.13702C2.917 10.4435 4.574 10.8042 9.155 10.8042C14.723 10.8042 15 10.9023 15 12.8819C15 14.1751 15.567 14.9596 16.5 14.9596C17.325 14.9596 18 15.6328 18 16.4556C18 17.2784 18.534 18.3954 19.187 18.9381C20.102 19.6985 19.834 20.4016 18.012 22.0131L15.651 24.1017L18 26.1794L20.349 28.2571L18 30.3348L15.651 32.4126L17.972 34.4662C19.862 36.1375 20.065 36.7484 19.064 37.7507C18.388 38.4272 18.045 39.6539 18.301 40.4758C18.701 41.7549 18.785 41.7241 18.884 40.2664C18.948 39.3289 19.534 38.1188 20.187 37.5761C21.102 36.8157 20.834 36.1126 19.012 34.5011L16.651 32.4126L19 30.3348L21.349 28.2571L19 26.1794L16.651 24.1017L19.012 22.0131C20.834 20.4016 21.102 19.6985 20.187 18.9381C18.534 17.5643 18.705 15.2314 20.5 14.6588C21.325 14.3962 22 13.4213 22 12.4921C22 10.9879 22.637 10.8042 27.845 10.8042C32.238 10.8042 34.101 10.4269 35.345 9.28412C37.13 7.64521 37.581 6.2523 36.077 7.02522C35.569 7.28535 33.623 6.74846 31.753 5.83177C29.882 4.91424 26.135 3.97428 23.426 3.74323L18.5 3.32187L24.105 4.39564ZM15.813 4.72309C16.534 4.96328 17.397 4.93336 17.729 4.65743C18.061 4.38151 17.471 4.18538 16.417 4.22112C15.252 4.26101 15.015 4.45797 15.813 4.72309ZM9.5 5.81764C8.239 6.26809 8.055 6.53155 9 6.53155C9.825 6.53155 11.4 6.21075 12.5 5.81764C13.761 5.36719 13.945 5.10373 13 5.10373C12.175 5.10373 10.6 5.42453 9.5 5.81764ZM21 12.4664C21 13.6856 20.333 14.1286 18.5 14.1286C16.667 14.1286 16 13.6856 16 12.4664C16 11.2472 16.667 10.8042 18.5 10.8042C20.333 10.8042 21 11.2472 21 12.4664Z" fill="#CC2F37"/>
+              </svg>
+            </figure>
+            <div class="flex-auto pt-[4px] space-y-[12px]">
+              <h4 class="text-[24px] text-gray-dark font-medium font-sans uppercase">Température</h4>
+              <p class="text-[24px] text-gray-dark">Ouvrir 1h avant, consommer à température ambiante.</p>
+            </div>
+          </article>
+          <article class="flex space-x-[16px]">
+            <figure class="h-[42px] w-[54px] flex-none">
+              <svg class="mx-auto" width="39" height="36" viewBox="0 0 39 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M22.8668 1.27814C24.1099 1.46888 26.1456 1.46888 27.3887 1.27814C28.6318 1.0874 27.6148 0.931641 25.1278 0.931641C22.6407 0.931641 21.6237 1.0874 22.8668 1.27814ZM32.611 3.40546C34.1476 4.44497 36.0517 6.60061 36.8418 8.19485C37.7733 10.0731 38.2798 10.5462 38.2806 9.53754C38.2822 7.79504 32.4721 1.51469 30.8582 1.51469C30.286 1.51469 31.0744 2.36513 32.611 3.40546ZM14.9774 3.8719C13.5485 5.47198 12.8258 14.3577 14.0319 15.4947C14.3797 15.8229 14.4849 15.0849 14.2654 13.8546C13.6529 10.4238 14.4027 9.93569 18.7174 10.956C22.3267 11.8098 22.6037 12.0655 22.8948 14.8134C23.1916 17.6137 23.2138 17.5854 23.3453 14.217C23.4703 11.0168 23.2985 10.677 21.5506 10.677C20.4875 10.677 18.4527 10.2655 17.0287 9.76242C13.8741 8.64795 13.5123 5.70519 16.2896 3.74196C17.3074 3.02314 17.7341 2.4151 17.2392 2.39094C16.7442 2.36762 15.7264 3.03314 14.9774 3.8719ZM38.4426 13.5923C38.459 14.9666 38.6432 15.4281 38.852 14.6176C39.0608 13.8072 39.0469 12.6827 38.8216 12.1188C38.5963 11.5549 38.4261 12.2179 38.4426 13.5923ZM24.1001 17.4096C22.9984 18.6324 22.9293 19.0064 23.8066 19.0064C24.4363 19.0064 25.1648 18.4441 25.4254 17.757C25.6852 17.0698 26.4646 16.5075 27.1577 16.5075C28.6606 16.5075 28.8266 19.0905 27.415 20.5206C26.6282 21.3177 26.7449 22.1565 27.9584 24.4404C28.8077 26.038 29.6578 27.1883 29.8477 26.9967C30.0368 26.8043 29.5411 25.6407 28.7461 24.4113C27.5835 22.613 27.4898 21.8658 28.2692 20.6014C28.802 19.7368 29.2385 18.2742 29.2385 17.3522C29.2385 15.1632 26.093 15.199 24.1001 17.4096ZM12.2553 19.0355C11.7982 21.3527 11.6395 21.4577 10.361 20.2849C8.52186 18.5991 7.59364 18.6715 5.8367 20.6397C4.87313 21.7176 4.50234 23.1327 4.74487 24.8053C5.18062 27.8138 2.98876 30.3551 0.718788 29.473C-0.371391 29.0491 -0.240673 29.4381 1.2425 31.0373C3.27897 33.2337 4.24913 33.8218 3.31845 32.2967C2.42147 30.8266 5.2168 27.3257 6.83644 27.8913C7.99075 28.2944 7.95046 28.1387 6.6309 27.0992C4.57469 25.4808 4.99317 25.0551 9.3325 24.3521C13.2295 23.7208 13.9168 24.7794 10.9678 26.8718C9.96309 27.5848 9.57915 28.1687 10.1144 28.1687C10.6488 28.1687 11.8417 27.3482 12.7634 26.3454L14.4397 24.5229V26.6727C14.4397 28.8284 15.8325 29.9078 18.4124 29.7512C19.2017 29.7038 18.9246 29.4256 17.7588 29.0966C16.2337 28.6659 15.5702 27.7264 15.0703 25.2884C14.7053 23.5084 14.0139 21.5718 13.5329 20.9854C13.0528 20.399 12.8998 19.1513 13.1942 18.2134C13.4877 17.2755 13.5091 16.5075 13.241 16.5075C12.9738 16.5075 12.5299 17.6453 12.2553 19.0355ZM35.1531 20.384C33.6584 22.4589 32.5987 24.7786 32.7968 25.5383C33.0969 26.6844 33.175 26.6544 33.2539 25.3633C33.3066 24.5079 34.4592 22.5263 35.8158 20.9613C37.1723 19.3962 38.2822 17.7536 38.2822 17.3113C38.2822 16.1119 38.1047 16.286 35.1531 20.384ZM9.82333 21.3994C11.1445 22.8778 11.1182 22.9861 9.33415 23.4701C5.45768 24.5221 4.01562 23.2368 6.38261 20.8388C7.71121 19.4928 8.19053 19.5711 9.82333 21.3994ZM13.6176 22.3381C13.6176 22.7962 13.2476 23.171 12.7954 23.171C12.3432 23.171 11.9733 22.7962 11.9733 22.3381C11.9733 21.88 12.3432 21.5052 12.7954 21.5052C13.2476 21.5052 13.6176 21.88 13.6176 22.3381ZM30.1462 28.7117C29.13 29.8737 29.2237 29.9603 30.9684 29.4697C32.8692 28.935 32.8823 28.9608 31.3424 30.2077C29.5337 31.6728 30.2111 31.9235 32.551 30.655C33.4578 30.1627 33.9141 29.2923 33.642 28.5726C33.041 26.9859 31.6047 27.0434 30.1462 28.7117ZM20.6059 31.996C20.6059 35.905 20.7399 36.0899 22.6613 34.8321C23.4834 34.2941 23.5517 34.0209 22.8668 34.0117C20.6355 33.9842 22.0208 32.5416 25.2075 31.5745C27.0606 31.0123 28.4065 30.3801 28.1993 30.1702C27.9921 29.9595 26.8222 30.1735 25.5997 30.6441C22.6128 31.7944 21.8391 31.7236 21.8391 30.3001C21.8391 29.6396 21.5612 28.9258 21.2225 28.7142C20.8838 28.5018 20.6059 29.9786 20.6059 31.996ZM25.9499 32.7498C24.8194 33.4045 24.2645 33.9401 24.7167 33.9401C25.1689 33.9401 26.4638 33.4045 27.5942 32.7498C28.7247 32.0951 29.2796 31.5596 28.8275 31.5596C28.3753 31.5596 27.0804 32.0951 25.9499 32.7498Z" fill="#CC2F37"/>
+              </svg>
+            </figure>
+            <div class="flex-auto pt-[4px] space-y-[12px]">
+              <h4 class="text-[24px] text-gray-dark font-medium font-sans uppercase">Saveur</h4>
+              <p class="text-[24px] text-gray-dark">Le fruit se développe intensément et le final mélangeant piment frais et amers apporte à cette expérience racoleuse un délicieux souvenir.</p>
+            </div>
+          </article>
+          <article class="flex space-x-[16px]">
+            <figure class="h-[42px] w-[54px] flex-none">
+              <svg class="mx-auto" width="46" height="36" viewBox="0 0 46 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M0.627356 0.74304C0.282173 1.04734 0 5.67003 0 11.0144C0 20.1758 0.131674 20.8567 2.30623 22.9311C3.57504 24.1409 5.26804 25.1311 6.06845 25.1311C7.16325 25.1311 7.52443 26.0431 7.52443 28.8035C7.52443 31.834 7.07296 32.7776 4.93791 34.2094C3.117 35.4307 2.90819 35.7741 4.23249 35.37C5.2671 35.0541 6.57823 34.2476 7.14539 33.5783C7.95614 32.623 8.33519 32.5873 8.91175 33.412C9.33594 34.019 9.09892 34.808 8.35024 35.2794C7.3636 35.9013 7.46612 35.9786 8.77725 35.602C9.72439 35.3301 10.9048 35.1081 11.4005 35.1081C11.8952 35.1081 11.4371 34.2892 10.3828 33.2881C7.61284 30.6609 7.78591 26.1496 10.6932 25.1726C11.9178 24.7611 13.8224 23.41 14.9257 22.1712C16.6892 20.1891 16.9093 18.957 16.7597 11.924L16.5895 3.92987L16.0543 12.4328C15.5963 19.7102 15.2219 21.1976 13.4556 22.7557C10.7082 25.1793 6.28761 25.1244 3.28442 22.6302C1.0412 20.7678 0.940554 20.2598 0.940554 10.7891V0.893527L8.46686 1.16456C12.6072 1.31338 15.9932 1.15459 15.9913 0.812042C15.9885 0.0413152 1.49455 -0.0243607 0.627356 0.74304ZM21.0628 1.36577C20.7815 2.01261 20.7317 3.60312 20.9518 4.8993C21.2876 6.88058 21.3731 6.76002 21.4917 4.13772L21.6327 1.0199H32.8535C43.7433 1.0199 44.0875 1.0756 44.4826 2.89059C44.8324 4.4944 44.9086 4.43537 45.0187 2.47488L45.1466 0.188477H33.3605C24.0631 0.188477 21.4653 0.437071 21.0628 1.36577ZM23.702 5.34328C23.0812 5.89201 22.6231 7.29545 22.6843 8.4611C22.7877 10.4266 22.8395 10.4 23.3944 8.08697C23.8938 6.00176 24.5042 5.54947 27.1115 5.32748C28.844 5.18032 31.232 5.64259 32.483 6.36676C33.7207 7.08427 35.2717 7.67126 35.9291 7.67126C36.5866 7.67126 35.5445 6.92298 33.6144 6.00842C29.6651 4.13689 25.3912 3.85005 23.702 5.34328ZM45.2557 7.68456C45.1033 11.7768 42.2817 16.0013 38.5044 17.7921C36.3421 18.8173 35.8708 19.3111 37.0559 19.3111C41.3543 19.3111 47.1123 10.7567 45.8134 6.29942C45.5661 5.45303 45.3159 6.0766 45.2557 7.68456ZM40.4438 6.93129C39.239 7.69703 39.2653 7.76271 40.6216 7.37943C41.7954 7.04852 42.3108 7.51577 42.5967 9.17196C42.9476 11.2015 42.9965 11.1582 43.1244 8.71053C43.2739 5.84629 42.7237 5.4813 40.4438 6.93129ZM2.50846 8.22582C2.16328 8.53012 1.88111 11.1666 1.88111 14.0832C1.88111 18.6053 2.22159 19.6869 4.19017 21.4271C5.45992 22.5495 7.26953 23.4682 8.21291 23.4682C10.6715 23.4682 14.113 21.1236 14.0801 19.4716C14.0556 18.2918 13.8788 18.3326 12.9843 19.7268C10.8258 23.0916 7.64012 23.5705 4.70277 20.974C3.20729 19.652 2.82166 18.2029 2.82166 13.9069C2.82166 8.73132 2.91853 8.50268 5.11755 8.50268C6.38071 8.50268 7.67492 8.87681 7.99471 9.3341C8.6926 10.3318 14.1083 10.459 14.1083 9.47794C14.1083 9.09964 12.8884 8.94915 11.3976 9.14204C9.90779 9.33576 8.40103 9.08383 8.0502 8.58249C7.35419 7.58561 3.51203 7.33869 2.50846 8.22582ZM20.7514 10.8307C20.5727 14.0682 26.8312 19.9555 29.4497 19.0135C30.1194 18.7724 29.9783 18.5845 29.0979 18.5454C27.2431 18.4623 22.9768 14.5646 21.7465 11.8284C21.2321 10.6852 20.7844 10.2362 20.7514 10.8307ZM23.5468 11.2597C23.4038 14.1804 28.9371 17.6483 33.7414 17.6483C36.4004 17.6483 42.3249 14.1987 42.3249 12.6498C42.3249 12.2682 41.0881 13.0497 39.5757 14.3866C35.2313 18.227 27.7999 17.3107 24.8269 12.5683C24.1412 11.475 23.5656 10.8864 23.5468 11.2597ZM31.7437 19.8615C33.3962 20.451 33.2429 27.9853 31.5189 30.9336C30.7486 32.2505 29.1609 33.6016 27.9918 33.9375C25.9489 34.5228 25.9743 34.5735 28.6399 35.2162C30.1654 35.5837 31.612 35.7101 31.8528 35.4964C32.0945 35.2827 31.7982 35.1081 31.1954 35.1081C29.7516 35.1081 29.8513 34.2193 31.5095 32.2821C32.8225 30.749 32.9147 30.7615 34.6857 32.6953C35.6893 33.7912 36.1144 34.9044 35.6291 35.1688C35.1447 35.434 36.1991 35.6219 37.973 35.587C40.8783 35.5305 41.9957 34.2767 39.1411 34.2767C38.4865 34.2767 36.992 33.3754 35.821 32.273C33.9672 30.5295 33.733 29.5609 34.0114 24.7885C34.3048 19.7501 34.1788 19.3128 32.4491 19.3752C31.4145 19.4117 31.0975 19.6312 31.7437 19.8615Z" fill="#CC2F37"/>
+              </svg>
+            </figure>
+            <div class="flex-auto pt-[4px] space-y-[12px]">
+              <h4 class="text-[24px] text-gray-dark font-medium font-sans uppercase">Accompagnement</h4>
+              <p class="text-[24px] text-gray-dark">Effiloché de poulet façon teriyaki, riz cantonais, filet de porc…</p>
+            </div>
+          </article>
+        </div>
+      </section>
+    </div>
+  </div>
+  <div id="content-histoire" class="min-h-screen flex items-center bg-green-light/20">
+    <section class="w-full max-w-content mx-auto pl-[24px] pr-[180px] 3xl:pr-[24px] py-[64px]">
+      <h3 class="mb-[32px] text-[96px] font-serif">Son histoire</h3>
+      <div class="flex items-center">
+        <figure class="max-h-[540px] flex-none">
+          <img
+            src="{{ 'custom-wine-frame.png' | asset_img_url: '480x' }}"
+            alt="Vin avec un cadre"
+            width="448"
+            height="538"
+            loading="lazy"
+            class="w-full"
+          />
+        </figure>
+        <div class="max-w-[850px] flex-auto space-y-[48px] text-[24px] text-dark">
+          <p>La Syrah est cultivée en bio par Emmanuel Tracol sur la commune d’Eclassan.</p>
+          <p>Le vigneron vend ses raisins à Jeff depuis quelques années, lui permettant de lancer son propre domaine sereinement.</p>
+          <p>La « maquerelle » scelle dans une métaphore le deal entre les deux vignerons.</p>
+          <p>Si elle est séduisante par son nez de pivoine et de framboise, elle n’est pas maquillée et n’est couverte d’aucun artifice: vendanges entières, levures indigènes, cuve béton.</p>
         </div>
       </div>
-    </modal-dialog>
-  {%- endfor -%}
-
-  {%- if product.media.size > 0 -%}
-    <script src="{{ 'product-modal.js' | asset_url }}" defer="defer"></script>
-    <script src="{{ 'media-gallery.js' | asset_url }}" defer="defer"></script>
-  {%- endif -%}
-
-  {%- if first_3d_model -%}
-    <script type="application/json" id="ProductJSON-{{ product.id }}">
-      {{ product.media | where: 'media_type', 'model' | json }}
-    </script>
-    <script src="{{ 'product-model.js' | asset_url }}" defer></script>
-  {%- endif -%}
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      function isIE() {
-        const ua = window.navigator.userAgent;
-        const msie = ua.indexOf('MSIE ');
-        const trident = ua.indexOf('Trident/');
-
-        return (msie > 0 || trident > 0);
-      }
-
-      if (!isIE()) return;
-      const hiddenInput = document.querySelector('#{{ product_form_id }} input[name="id"]');
-      const noScriptInputWrapper = document.createElement('div');
-      const variantSwitcher = document.querySelector('variant-radios[data-section="{{ section.id }}"]') || document.querySelector('variant-selects[data-section="{{ section.id }}"]');
-      noScriptInputWrapper.innerHTML = document.querySelector('.product-form__noscript-wrapper-{{ section.id }}').textContent;
-      variantSwitcher.outerHTML = noScriptInputWrapper.outerHTML;
-
-      document.querySelector('#Variants-{{ section.id }}').addEventListener('change', function(event) {
-        hiddenInput.value = event.currentTarget.value;
-      });
-    });
-  </script>
-
-  {%- liquid
-    if product.selected_or_first_available_variant.featured_media
-      assign seo_media = product.selected_or_first_available_variant.featured_media
-    else
-      assign seo_media = product.featured_media
-    endif
-  -%}
-
-  <script type="application/ld+json">
-    {
-      "@context": "http://schema.org/",
-      "@type": "Product",
-      "name": {{ product.title | json }},
-      "url": {{ request.origin | append: product.url | json }},
-      {% if seo_media -%}
-        "image": [
-          {{ seo_media | image_url: width: seo_media.preview_image.width | prepend: "https:" | json }}
-        ],
-      {%- endif %}
-      "description": {{ product.description | strip_html | json }},
-      {% if product.selected_or_first_available_variant.sku != blank -%}
-        "sku": {{ product.selected_or_first_available_variant.sku | json }},
-      {%- endif %}
-      "brand": {
-        "@type": "Brand",
-        "name": {{ product.vendor | json }}
-      },
-      "offers": [
-        {%- for variant in product.variants -%}
-          {
-            "@type" : "Offer",
-            {%- if variant.sku != blank -%}
-              "sku": {{ variant.sku | json }},
-            {%- endif -%}
-            {%- if variant.barcode.size == 12 -%}
-              "gtin12": {{ variant.barcode }},
-            {%- endif -%}
-            {%- if variant.barcode.size == 13 -%}
-              "gtin13": {{ variant.barcode }},
-            {%- endif -%}
-            {%- if variant.barcode.size == 14 -%}
-              "gtin14": {{ variant.barcode }},
-            {%- endif -%}
-            "availability" : "http://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
-            "price" : {{ variant.price | divided_by: 100.00 | json }},
-            "priceCurrency" : {{ cart.currency.iso_code | json }},
-            "url" : {{ request.origin | append: variant.url | json }}
-          }{% unless forloop.last %},{% endunless %}
-        {%- endfor -%}
-      ]
-    }
-  </script>
+    </section>
+  </div>
 </section>
 
 {% schema %}
 {
-  "name": "t:sections.main-product.name",
-  "tag": "section",
-  "class": "section",
-  "blocks": [
-    {
-      "type": "@app"
-    },
-    {
-      "type": "text",
-      "name": "t:sections.main-product.blocks.text.name",
-      "settings": [
-        {
-          "type": "text",
-          "id": "text",
-          "default": "Text block",
-          "label": "t:sections.main-product.blocks.text.settings.text.label"
-        },
-        {
-          "type": "select",
-          "id": "text_style",
-          "options": [
-            {
-              "value": "body",
-              "label": "t:sections.main-product.blocks.text.settings.text_style.options__1.label"
-            },
-            {
-              "value": "subtitle",
-              "label": "t:sections.main-product.blocks.text.settings.text_style.options__2.label"
-            },
-            {
-              "value": "uppercase",
-              "label": "t:sections.main-product.blocks.text.settings.text_style.options__3.label"
-            }
-          ],
-          "default": "body",
-          "label": "t:sections.main-product.blocks.text.settings.text_style.label"
-        }
-      ]
-    },
-    {
-      "type": "title",
-      "name": "t:sections.main-product.blocks.title.name",
-      "limit": 1
-    },
-    {
-      "type": "price",
-      "name": "t:sections.main-product.blocks.price.name",
-      "limit": 1
-    },
-    {
-      "type": "quantity_selector",
-      "name": "t:sections.main-product.blocks.quantity_selector.name",
-      "limit": 1
-    },
-    {
-      "type": "variant_picker",
-      "name": "t:sections.main-product.blocks.variant_picker.name",
-      "limit": 1,
-      "settings": [
-        {
-          "type": "select",
-          "id": "picker_type",
-          "options": [
-            {
-              "value": "dropdown",
-              "label": "t:sections.main-product.blocks.variant_picker.settings.picker_type.options__1.label"
-            },
-            {
-              "value": "button",
-              "label": "t:sections.main-product.blocks.variant_picker.settings.picker_type.options__2.label"
-            }
-          ],
-          "default": "button",
-          "label": "t:sections.main-product.blocks.variant_picker.settings.picker_type.label"
-        }
-      ]
-    },
-    {
-      "type": "buy_buttons",
-      "name": "t:sections.main-product.blocks.buy_buttons.name",
-      "limit": 1,
-      "settings": [
-        {
-          "type": "checkbox",
-          "id": "show_dynamic_checkout",
-          "default": true,
-          "label": "t:sections.main-product.blocks.buy_buttons.settings.show_dynamic_checkout.label",
-          "info": "t:sections.main-product.blocks.buy_buttons.settings.show_dynamic_checkout.info"
-        }
-      ]
-    },
-    {
-      "type": "description",
-      "name": "t:sections.main-product.blocks.description.name",
-      "limit": 1
-    },
-    {
-      "type": "share",
-      "name": "t:sections.main-product.blocks.share.name",
-      "limit": 1,
-      "settings": [
-        {
-          "type": "text",
-          "id": "share_label",
-          "label": "t:sections.main-product.blocks.share.settings.text.label",
-          "default": "Share"
-        },
-        {
-          "type": "paragraph",
-          "content": "t:sections.main-product.blocks.share.settings.featured_image_info.content"
-        },
-        {
-          "type": "paragraph",
-          "content": "t:sections.main-product.blocks.share.settings.title_info.content"
-        }
-      ]
-    },
-    {
-      "type": "custom_liquid",
-      "name": "t:sections.main-product.blocks.custom_liquid.name",
-      "settings": [
-        {
-          "type": "liquid",
-          "id": "custom_liquid",
-          "label": "t:sections.main-product.blocks.custom_liquid.settings.custom_liquid.label",
-          "info": "t:sections.main-product.blocks.custom_liquid.settings.custom_liquid.info"
-        }
-      ]
-    },
-    {
-      "type": "collapsible_tab",
-      "name": "t:sections.main-product.blocks.collapsible_tab.name",
-      "settings": [
-        {
-          "type": "text",
-          "id": "heading",
-          "default": "Collapsible row",
-          "info": "t:sections.main-product.blocks.collapsible_tab.settings.heading.info",
-          "label": "t:sections.main-product.blocks.collapsible_tab.settings.heading.label"
-        },
-        {
-          "type": "select",
-          "id": "icon",
-          "options": [
-            {
-              "value": "none",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__1.label"
-            },
-            {
-              "value": "apple",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__2.label"
-            },
-            {
-              "value": "banana",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__3.label"
-            },
-            {
-              "value": "bottle",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__4.label"
-            },
-            {
-              "value": "box",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__5.label"
-            },
-            {
-              "value": "carrot",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__6.label"
-            },
-            {
-              "value": "chat_bubble",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__7.label"
-            },
-            {
-              "value": "check_mark",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__8.label"
-            },
-            {
-              "value": "clipboard",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__9.label"
-            },
-            {
-              "value": "dairy",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__10.label"
-            },
-            {
-              "value": "dairy_free",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__11.label"
-            },
-            {
-              "value": "dryer",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__12.label"
-            },
-            {
-              "value": "eye",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__13.label"
-            },
-            {
-              "value": "fire",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__14.label"
-            },
-            {
-              "value": "gluten_free",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__15.label"
-            },
-            {
-              "value": "heart",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__16.label"
-            },
-            {
-              "value": "iron",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__17.label"
-            },
-            {
-              "value": "leaf",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__18.label"
-            },
-            {
-              "value": "leather",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__19.label"
-            },
-            {
-              "value": "lightning_bolt",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__20.label"
-            },
-            {
-              "value": "lipstick",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__21.label"
-            },
-            {
-              "value": "lock",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__22.label"
-            },
-            {
-              "value": "map_pin",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__23.label"
-            },
-            {
-              "value": "nut_free",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__24.label"
-            },
-            {
-              "value": "pants",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__25.label"
-            },
-            {
-              "value": "paw_print",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__26.label"
-            },
-            {
-              "value": "pepper",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__27.label"
-            },
-            {
-              "value": "perfume",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__28.label"
-            },
-            {
-              "value": "plane",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__29.label"
-            },
-            {
-              "value": "plant",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__30.label"
-            },
-            {
-              "value": "price_tag",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__31.label"
-            },
-            {
-              "value": "question_mark",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__32.label"
-            },
-            {
-              "value": "recycle",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__33.label"
-            },
-            {
-              "value": "return",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__34.label"
-            },
-            {
-              "value": "ruler",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__35.label"
-            },
-            {
-              "value": "serving_dish",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__36.label"
-            },
-            {
-              "value": "shirt",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__37.label"
-            },
-            {
-              "value": "shoe",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__38.label"
-            },
-            {
-              "value": "silhouette",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__39.label"
-            },
-            {
-              "value": "snowflake",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__40.label"
-            },
-            {
-              "value": "star",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__41.label"
-            },
-            {
-              "value": "stopwatch",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__42.label"
-            },
-            {
-              "value": "truck",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__43.label"
-            },
-            {
-              "value": "washing",
-              "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.options__44.label"
-            }
-          ],
-          "default": "check_mark",
-          "label": "t:sections.main-product.blocks.collapsible_tab.settings.icon.label"
-        },
-        {
-          "type": "richtext",
-          "id": "content",
-          "label": "t:sections.main-product.blocks.collapsible_tab.settings.content.label"
-        },
-        {
-          "type": "page",
-          "id": "page",
-          "label": "t:sections.main-product.blocks.collapsible_tab.settings.page.label"
-        }
-      ]
-    },
-    {
-      "type": "popup",
-      "name": "t:sections.main-product.blocks.popup.name",
-      "settings": [
-        {
-          "type": "text",
-          "id": "text",
-          "default": "Pop-up link text",
-          "label": "t:sections.main-product.blocks.popup.settings.link_label.label"
-        },
-        {
-          "id": "page",
-          "type": "page",
-          "label": "t:sections.main-product.blocks.popup.settings.page.label"
-        }
-      ]
-    },
-    {
-      "type": "rating",
-      "name": "t:sections.main-product.blocks.rating.name",
-      "limit": 1,
-      "settings": [
-        {
-          "type": "paragraph",
-          "content": "t:sections.main-product.blocks.rating.settings.paragraph.content"
-        }
-      ]
-    }
-  ],
-  "settings": [
-    {
-      "type": "checkbox",
-      "id": "enable_sticky_info",
-      "default": true,
-      "label": "t:sections.main-product.settings.enable_sticky_info.label"
-    },
-    {
-      "type": "header",
-      "content": "t:sections.main-product.settings.header.content",
-      "info": "t:sections.main-product.settings.header.info"
-    },
-    {
-      "type": "select",
-      "id": "gallery_layout",
-      "options": [
-        {
-          "value": "stacked",
-          "label": "t:sections.main-product.settings.gallery_layout.options__1.label"
-        },
-        {
-          "value": "thumbnail",
-          "label": "t:sections.main-product.settings.gallery_layout.options__2.label"
-        },
-        {
-          "value": "thumbnail_slider",
-          "label": "t:sections.main-product.settings.gallery_layout.options__3.label"
-        }
-      ],
-      "default": "stacked",
-      "label": "t:sections.main-product.settings.gallery_layout.label"
-    },
-    {
-      "type": "select",
-      "id": "media_size",
-      "options": [
-        {
-          "value": "small",
-          "label": "t:sections.main-product.settings.media_size.options__1.label"
-        },
-        {
-          "value": "medium",
-          "label": "t:sections.main-product.settings.media_size.options__2.label"
-        },
-        {
-          "value": "large",
-          "label": "t:sections.main-product.settings.media_size.options__3.label"
-        }
-      ],
-      "default": "large",
-      "label": "t:sections.main-product.settings.media_size.label",
-      "info": "t:sections.main-product.settings.media_size.info"
-    },
-    {
-      "type": "select",
-      "id": "mobile_thumbnails",
-      "options": [
-        {
-          "value": "show",
-          "label": "t:sections.main-product.settings.mobile_thumbnails.options__1.label"
-        },
-        {
-          "value": "hide",
-          "label": "t:sections.main-product.settings.mobile_thumbnails.options__2.label"
-        }
-      ],
-      "default": "hide",
-      "label": "t:sections.main-product.settings.mobile_thumbnails.label"
-    },
-    {
-      "type": "checkbox",
-      "id": "hide_variants",
-      "default": false,
-      "label": "t:sections.main-product.settings.hide_variants.label"
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_video_looping",
-      "default": false,
-      "label": "t:sections.main-product.settings.enable_video_looping.label"
-    },
-    {
-      "type": "header",
-      "content": "t:sections.all.padding.section_padding_heading"
-    },
-    {
-      "type": "range",
-      "id": "padding_top",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "t:sections.all.padding.padding_top",
-      "default": 36
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "t:sections.all.padding.padding_bottom",
-      "default": 36
-    }
-  ]
+  "name": "Page Produit Personnalisé",
+  "tag": "div"
 }
 {% endschema %}
