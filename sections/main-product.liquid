@@ -1,34 +1,38 @@
 {%- style -%}
+html {
+  scroll-behavior: smooth;
+}
+
 #MainProduct-{{ section.id }} .active-grid {
   display: grid;
 }
 
-#MainProduct-{{ section.id }} #custom-green-light-background {
+#MainProduct-{{ section.id }} #content-histoire {
   background: url({{ 'custom-green-light-background.svg' | asset_url }}) center / cover;
 }
 {%- endstyle -%}
 
 <section id="MainProduct-{{ section.id }}" data-section="{{ section.id }}">
   <div class="fixed top-1/2 -translate-y-1/2 right-0">
-    <div class="flex flex-col items-center space-y-[32px]">
-      <a href="#" class="space-y-[8px] text-black text-center">
+    <div class="flex flex-col items-center px-[24px] space-y-[32px] text-black text-center">
+      <a href="#content-description">
         <span class="block text-[16px]">Sa</span>
         <span class="block text-[24px]">Description</span>
       </a>
-      <div class="h-[80px] w-[1px] bg-black rounded-full"></div>
-      <p href="#" class="space-y-[8px] text-black text-center">
+      <div class="h-[80px] w-[1px] bg-black rounded-full text-[0px]">.</div>
+      <a href="#content-degustation">
         <span class="block text-[16px]">Sa</span>
         <span class="block text-[24px]">Dégustation</span>
-      </p>
-      <div class="h-[80px] w-[1px] bg-black rounded-full"></div>
-      <p href="#" class="space-y-[8px] text-black text-center">
+      </a>
+      <div class="h-[80px] w-[1px] bg-black rounded-full text-[0px]">.</div>
+      <a href="#content-histoire">
         <span class="block text-[16px]">Son</span>
         <span class="block text-[24px]">Histoire</span>
-      </p>
+      </a>
     </div>
   </div>
-  <div class="max-w-content mx-auto px-[24px]">
-    <div class="min-h-screen flex flex-col py-[56px]">
+  <div class="max-w-content mx-auto pl-[24px] pr-[180px] 3xl:pr-[24px]">
+    <div id="content-description" class="min-h-screen flex flex-col py-[56px]">
       <nav class="flex flex-none justify-center items-center space-x-[8px] text-gray-medium">
         <a href="/">Accueil</a>
         <span>—</span>
@@ -38,12 +42,12 @@
       </nav>
       <section class="flex flex-auto items-center justify-between py-[64px]">
         <div class="max-w-[470px] flex-none">
-          <h2 class="text-[96px] font-serif">Filtre sauvage</h2>
+          <h2 class="text-[96px] font-serif">{{ product.title | escape }}</h2>
           <p class="mt-[18px] space-x-[16px] text-black font-medium">
-            <span class="text-[70px]">€20.00</span>
+            <span class="text-[70px]">{{ product.price | money_with_currency }}</span>
             <span class="text-[42px]">(en stock)</span>
           </p>
-          <p class="my-[42px] text-[24px] text-gray-dark">Philtre sauvage — "Maquerelle" 2019 100% Syrah</p>
+          <p class="my-[42px] text-[24px] text-gray-dark">{{ product.description | escape }}</p>
           <div class="w-[128px] flex items-center border border-green-light rounded-full font-medium">
             <button class="w-[40px] h-[40px] flex-none">–</button>
             <p class="flex-auto text-center">1</p>
@@ -101,10 +105,10 @@
             <path d="M335.314 179.124C334.212 180.201 333.134 181.317 332.021 182.385C330.57 183.774 329.119 185.163 327.668 186.552C328.098 187.289 329.011 187.752 329.89 187.129C331.968 185.68 333.999 184.173 336.019 182.657C342.238 176.468 348.267 170.101 354.107 163.557C347.981 168.918 341.754 174.177 335.303 179.114L335.314 179.124Z" fill="#CC2F37"/>
           </svg>        
           <img
-            src="https://cdn.shopify.com/s/files/1/0608/0128/6298/products/bottle-3.png"
-            alt="Nom du produit"
-            width="1920"
-            height="965"
+            src="{{ product.featured_media | image_url: width: 1000 }}"
+            alt="{{ product.featured_media.alt | escape }}"
+            width="938"
+            height="722"
             loading="lazy"
             class="absolute top-1/2 left-[40%] -translate-x-1/2 -translate-y-1/2 -rotate-[12deg]"
           />
@@ -127,7 +131,7 @@
         </div>
       </section>
     </div>
-    <div class="min-h-screen flex items-center">
+    <div id="content-degustation" class="min-h-screen flex items-center">
       <section class="py-[64px]">
         <h3 class="mb-[96px] text-[96px] font-serif">Sa degustation</h3>
         <div class="active-grid grid-cols-2 gap-[96px]">
@@ -179,8 +183,8 @@
       </section>
     </div>
   </div>
-  <div id="custom-green-light-background" class="min-h-screen flex items-center bg-green-light/20">
-    <section class="w-full max-w-content mx-auto px-[24px] py-[64px]">
+  <div id="content-histoire" class="min-h-screen flex items-center bg-green-light/20">
+    <section class="w-full max-w-content mx-auto pl-[24px] pr-[180px] 3xl:pr-[24px] py-[64px]">
       <h3 class="mb-[32px] text-[96px] font-serif">Son histoire</h3>
       <div class="flex items-center">
         <figure class="max-h-[540px] flex-none">
