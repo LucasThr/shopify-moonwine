@@ -1,6 +1,6 @@
 {{ 'customer.css' | asset_url | stylesheet_tag }}
 
-<div class="customer login">
+<div class="customer login font-sans">
   <h1 id="recover" tabindex="-1">
     {{ 'customer.recover_password.title' | t }}
   </h1>
@@ -52,9 +52,15 @@
     {%- endform -%}
   </div>
 
-  <h1 id="login" tabindex="-1">
-    {{ 'customer.login_page.title' | t }}
+
+
+  <h1 class="font-serif text-[80px]">
+    Bienvenue
   </h1>
+  <h2 id="login"  class="text-[32px] font-sans" tabindex="-1">
+    {{ 'customer.login_page.title' | t }}
+  </h2>
+  
   <div>
     {%- if recover_success == true -%}
       <h3 class="form__message" tabindex="-1" autofocus>
@@ -80,49 +86,49 @@
         </h2>
         {{ form.errors | default_errors }}
       {%- endif -%}
-
-      <div class="field">        
+      <div class="w-full flex flex-col ">
+        <label class="text-left mb-1 text-[14px]" for="customer[email]">
+          Adresse e-mail
+        </label>
         <input
           type="email"
           name="customer[email]"
           id="CustomerEmail"
+          class="focus:outline-none focus:shadow-none w-full border px-6 py-3 rounded-xl border-green-medium"
           autocomplete="email"
           autocorrect="off"
           autocapitalize="off"
           {% if form.errors contains 'form' %}
             aria-invalid="true"
           {% endif %}
-          placeholder="{{ 'customer.login_page.email' | t }}"
         >
-        <label for="CustomerEmail">
-          {{ 'customer.login_page.email' | t }}
-        </label>
       </div>
-
       {%- if form.password_needed -%}
-        <div class="field">          
-          <input
-            type="password"
-            value=""
-            name="customer[password]"
-            id="CustomerPassword"
-            autocomplete="current-password"
-            {% if form.errors contains 'form' %}
-              aria-invalid="true"
-            {% endif %}
-            placeholder="{{ 'customer.login_page.password' | t }}"
-          >
-          <label for="CustomerPassword">
-            {{ 'customer.login_page.password' | t }}
-          </label>
-        </div>
 
-        <a href="#recover">
+      <div class="w-full flex flex-col my-2 ">
+        <label class="text-left mb-1 text-[14px]" for="customer[email]">
+          Mot de passe
+        </label>
+        <input
+        type="password"
+        value=""
+        name="customer[password]"
+        class="focus:outline-none focus:shadow-none w-full border px-6 py-3 rounded-xl border-green-medium"
+        id="CustomerPassword"
+        autocomplete="current-password"
+        {% if form.errors contains 'form' %}
+          aria-invalid="true"
+        {% endif %}
+      >
+        {%- comment -%} placeholder="{{ 'customer.login_page.email' | t }}"{%- endcomment -%} 
+        <a href="#recover" class="pt-6">
           {{ 'customer.login_page.forgot_password' | t }}
         </a>
       {%- endif -%}
 
-      <button>
+    </div>
+     
+      <button class="rounded-full bg-red px-6 py-3">
         {{ 'customer.login_page.sign_in' | t }}
       </button>
 

@@ -18,7 +18,8 @@ module.exports = {
           DEFAULT: '#CC2F37'
         },
         green: {
-          light: '#D9D7B1'
+          light: '#D9D7B1',
+          medium:'#CAE3BA'
         }
       },
       maxWidth: {

@@ -14,7 +14,7 @@
     </div>
 
   </div>
-  <div class="">
+  <div class="mb-20">
     {%- paginate collections.all.products by section.settings.products_per_page -%}
       {%- if collections.all.products.size == 0 -%}
         <div class="collection collection--empty page-width" id="product-grid" data-id="{{ section.id }}">
