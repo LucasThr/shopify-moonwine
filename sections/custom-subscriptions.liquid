@@ -3,48 +3,186 @@
     <h2 class="ml-20 font-serif text-7xl mb-20">Nos abonnemments</h2>
   </div>
 
-  <div class="flex flex-col md:flex-row justify-center items-center">
+  <div class="relative w-full flex flex-col md:flex-row justify-center items-center ">
+    <img
+    src="{{ 'background-subscriptions.png' | asset_img_url: '1920x' }}"
+    alt="Fond de motifs"
+    width="1920"
+    height="594"
+    loading="lazy"
+    class="absolute w-full -z-10 object-cover h-[90%]"
+  />
     {% paginate collections.abonnements.products by 1000 %}
-      {% for product in collections.abonnements.products %}
-        <article class="h-[507px] w-[330px] shadow-xl bg-white flex flex-col justify-between p-6 mx-6">
-          <div class="flex justify-between">
-            <div class="font-serif text-3xl">
+    {% assign products_by_price = collections.abonnements.products | sort: "price" %}
+      {% for product in products_by_price%}
+        <article class="h-[507px] w-[330px] shadow-xl bg-white flex flex-col justify-between p-6 m-6">
+          <div class="flex justify-between pt-6">
+            <div class="font-serif text-[24px]">
               {{ product.title }}
             </div>
             <div class="flex flex-col ">
-              <span class=" text-right text-3xl pr-4  text-red">
-                {{product.price}}€
+              <span class=" text-right font-sans font-bold text-[24px] pr-4  text-red">
+                {{product.price| money}}
               </span>
-              <span class="text-lg text-right">
+              <span class="text-[14px] text-gray-dark font-sans font-medium text-right">
                 / mois (hors livraison)
               </span>
             </div>
           </div>
           <div class="flex flex-col justify-center">
-
             <div class="mb-10">
-              {% for options in product.options_by_name['plus'].values %}
-                <div class="flex mt-6">
+              {% if product.handle == "abonnement-basique" %}
+                <div class="flex mt-6 text-[14px]">
                   <span class="mr-6">
                     {%- render 'custom-icon-check' -%}
                   </span>
-                  <span class="text-xl">
-                    {{ options }}
+                  <span class="text-xl ">
+                    6 Boxs de série
                   </span>
                 </div>
-              {% endfor %}
-              {% for options in product.options_by_name['moins'].values %}
-                <div class="flex mt-6">
+                <div class="flex mt-6 text-[14px]">
                   <span class="mr-6">
                     {%- render 'custom-icon-uncheck' -%}
                   </span>
                   <span class="text-xl text-gray-medium">
-                    {{ options }}
+                    3 hors-séries 
                   </span>
                 </div>
-              {% endfor %}
+                <div class="flex mt-6 text-[14px]">
+                  <span class="mr-6">
+                    {%- render 'custom-icon-uncheck' -%}
+                  </span>
+                  <span class="text-xl text-gray-medium">
+                    6 bouteilles au choix parmi la cave
+                  </span>
+                </div>
+                <div class="flex mt-6 text-[14px]">
+                  <span class="mr-6">
+                    {%- render 'custom-icon-check' -%}
+                  </span>
+                  <span class="text-xl">
+                    Facilités de paiement (en 1, 3 ou 12 fois)
+                  </span>
+                </div>
+                <div class="flex mt-6 text-[14px]">
+                  <span class="mr-6">
+                    {%- render 'custom-icon-check' -%}
+                  </span>
+                  <span class="text-xl">
+                    Envoi CHRONOPOST en point relais ou à domicile
+                  </span>
+                </div>
+                <div class="flex mt-6 text-[14px]">
+                  <span class="mr-6">
+                    {%- render 'custom-icon-check' -%}
+                  </span>
+                  <span class="text-xl ">
+                    Livraison offerte en point relais si paiement en une fois
+                  </span>
+                </div>
+              {% endif %}
+              {% if product.handle == "abonnement-explorer" %}
+              <div class="flex mt-6 text-[14px]">
+                <span class="mr-6">
+                  {%- render 'custom-icon-check' -%}
+                </span>
+                <span class="text-xl">
+                  6 Boxs de série
+                </span>
+              </div>
+              <div class="flex mt-6 text-[14px]">
+                <span class="mr-6">
+                  {%- render 'custom-icon-check' -%}
+                </span>
+                <span class="text-xl ">
+                  3 hors-séries 
+                </span>
+              </div>
+              <div class="flex mt-6 text-[14px]">
+                <span class="mr-6">
+                  {%- render 'custom-icon-uncheck' -%}
+                </span>
+                <span class="text-xl text-gray-medium">
+                  6 bouteilles au choix parmi la cave
+                </span>
+              </div>
+              <div class="flex mt-6 text-[14px]">
+                <span class="mr-6">
+                  {%- render 'custom-icon-check' -%}
+                </span>
+                <span class="text-xl ">
+                  Facilités de paiement (en 1, 3 ou 12 fois)
+                </span>
+              </div>
+              <div class="flex mt-6 text-[14px]">
+                <span class="mr-6">
+                  {%- render 'custom-icon-check' -%}
+                </span>
+                <span class="text-xl ">
+                  Envoi CHRONOPOST en point relais ou à domicile
+                </span>
+              </div>
+              <div class="flex mt-6 text-[14px]">
+                <span class="mr-6">
+                  {%- render 'custom-icon-check' -%}
+                </span>
+                <span class="text-xl ">
+                  Livraison offerte en point relais si paiement en une fois
+                </span>
+              </div>
+            {% endif %}
+            {% if product.handle == "abonnement-premium" %}
+            <div class="flex mt-6 text-[14px]">
+              <span class="mr-6">
+                {%- render 'custom-icon-check' -%}
+              </span>
+              <span class="text-xl">
+                6 Boxs de série
+              </span>
             </div>
-            <a href="{{ product.url }}" class="self-center text-xl rounded-full px-8 py-4 text-white bg-red my-6">Je m'abonne</a>
+            <div class="flex mt-6 text-[14px]">
+              <span class="mr-6">
+                {%- render 'custom-icon-check' -%}
+              </span>
+              <span class="text-xl">
+                3 hors-séries 
+              </span>
+            </div>
+            <div class="flex mt-6 text-[14px]">
+              <span class="mr-6">
+                {%- render 'custom-icon-check' -%}
+              </span>
+              <span class="text-xl">
+                6 bouteilles au choix parmi la cave
+              </span>
+            </div>
+            <div class="flex mt-6 text-[14px]">
+              <span class="mr-6">
+                {%- render 'custom-icon-check' -%}
+              </span>
+              <span class="text-xl">
+                Facilités de paiement (en 1, 3 ou 12 fois)
+              </span>
+            </div>
+            <div class="flex mt-6 text-[14px]">
+              <span class="mr-6">
+                {%- render 'custom-icon-check' -%}
+              </span>
+              <span class="text-xl">
+                Envoi CHRONOPOST en point relais ou à domicile
+              </span>
+            </div>
+            <div class="flex mt-6 text-[14px]">
+              <span class="mr-6">
+                {%- render 'custom-icon-check' -%}
+              </span>
+              <span class="text-xl ">
+                Livraison offerte en point relais si paiement en une fois
+              </span>
+            </div>
+          {% endif %}
+            </div>
+            <a href="{{ product.url }}" class="self-center text-[14px] rounded-full px-8 py-4 text-white bg-red mb-6">Je m'abonne</a>
           </div>
         </article>
       {% endfor %}
