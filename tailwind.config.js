@@ -31,6 +31,9 @@ module.exports = {
       },
       boxShadow: {
         grid: '0 0 0 1px #D9D7B1'
+      },
+      screens: {
+        '3xl': '1730px'
       }
     },
   },
