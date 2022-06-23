@@ -11,7 +11,7 @@
         </div>
         <div class="flex">
           {%- for block in section.blocks -%}
-            <div class="px-10">
+            <div class="pl-40">
               {%- if block.settings.heading != blank -%}
                 <h2 class="text-3xl mb-3 text-white">
                   {{- block.settings.heading | escape -}}
@@ -23,9 +23,13 @@
                     <ul class="flex flex-col">
                       {%- for link in block.settings.menu.links -%}
                         <li>
-                          <a href="{{ link.url }}" class="">
+                          <a href="{{ link.url }}" class="font-sans text-[16px]">
+                           <span class="font-serif">
                             >
+                           </span> 
+                           <span class="text-[14px]">
                             {{ link.title }}
+                           </span>
                           </a>
                         </li>
                       {%- endfor -%}
