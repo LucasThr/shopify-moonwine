@@ -5,6 +5,11 @@
       "settings": {
       }
     },
+    "165606227674298a56": {
+      "type": "custom-selection-month",
+      "settings": {
+      }
+    },
     "cart-footer": {
       "type": "main-cart-footer",
       "disabled": true,
@@ -35,6 +40,7 @@
   },
   "order": [
     "cart-items",
+    "165606227674298a56",
     "cart-footer",
     "16560607517d2e7a92"
   ]
