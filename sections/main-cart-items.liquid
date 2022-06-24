@@ -21,7 +21,7 @@
             {%- for item in cart.items -%}
             <tr>
               <td class="flex items-center">
-                <div class="max-h-[180px]">
+                <div class="flex-none max-h-[180px]">
                   <img src="{{ item.image | image_url: width: 134 }}"
                     alt="{{ item.image.alt | escape }}"
                     loading="lazy"
@@ -29,7 +29,7 @@
                     height="{{ 150 | divided_by: item.image.aspect_ratio | ceil }}"
                   />
                 </div>
-                <p class="px-[24px] text-[20px]">
+                <p class="flex-auto px-[24px] text-[20px]">
                   <span class="block font-semibold">{{ item.product.title | escape }}</span>
                   <span class="block">{{ item.product.description | truncate: 24 }}</span>
                   <span class="block font-semibold">(en stock)</span>
