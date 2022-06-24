@@ -73,7 +73,6 @@
   
           </tbody>
         </table>
-        {%- endif -%}
 
         <h5 class="mb-[12px] text-black text-[20px] font-medium font-sans">Mon code promo</h5>
         <div class="flex max-w-[354px] bg-green-light/40 rounded-full">
@@ -84,6 +83,10 @@
           />
           <button class="h-[40px] px-[20px] bg-black rounded-full text-[20px] text-green-light font-medium uppercase">Ok</button>
         </div>
+        {%- else -%}
+        <h5 class="mb-[12px] text-black text-[20px] font-medium font-sans">Votre panier est vide</h5>
+        {%- endif -%}
+
       </div>
       <div class="w-[25%] flex-none">
         <h3 class="text-[40px] font-serif">Resume</h3>
@@ -103,17 +106,23 @@
           height="38"
           loading="lazy"
         />
-        <button
-          type="submit"
-          id="checkout"
-          name="checkout"
-          form="cart"
-          class="w-full mt-[28px] mb-[16px] px-[32px] py-[12px] bg-red rounded-full text-white text-center"
+        <div class="mt-[28px]">
+
+          {%- if cart != empty -%}
+          <button
+            type="submit"
+            id="checkout"
+            name="checkout"
+            form="cart"
+            class="w-full mb-[16px] px-[32px] py-[12px] bg-red rounded-full text-white text-center"
           >Passer ma commande</button>
-        <a
-          href="{{ routes.all_products_collection_url }}"
-          class="block px-[32px] py-[12px] border border-gray-dark rounded-full text-center"
-        >Continuer mes achats</a>
+          {%- endif -%}
+
+          <a
+            href="{{ routes.all_products_collection_url }}"
+            class="block px-[32px] py-[12px] border border-gray-dark rounded-full text-center"
+          >Continuer mes achats</a>
+        </div>
       </div>
     </div>
   </div>
