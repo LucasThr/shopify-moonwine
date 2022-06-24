@@ -10,7 +10,7 @@
     <div class="active-grid grid-cols-4 gap-[1px]">
 
       {%- for product in section.settings.collection.products limit: section.settings.productLength -%}
-      <a href="#">
+      <a href="{{ product.url }}">
         <article class="group relative bg-green-light/20 shadow-grid overflow-hidden">
           <span class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 w-0 h-0 opacity-50 duration-500 group-hover:w-[200%] group-hover:h-[200%]">
             <svg class="w-full h-full" viewBox="0 0 698 710" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -78,7 +78,7 @@
 
     </div>
     <div class="flex mt-[56px]">
-      <a href="#" class="mx-auto px-[32px] py-[12px] bg-red rounded-full text-white">Découvrir notre cave exclusive</a>
+      <a href="/pages/cave-exclusive" class="mx-auto px-[32px] py-[12px] bg-red rounded-full text-white">Découvrir notre cave exclusive</a>
     </div>
   </div>
 </section>

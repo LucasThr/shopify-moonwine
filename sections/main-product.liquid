@@ -12,6 +12,37 @@ html {
 }
 {%- endstyle -%}
 
+{%- assign product_form_id = 'product-form-' | append: section.id -%}
+
+<script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const quantityInput = document.querySelector('input[name="quantity"]')
+    console.log(quantityInput.value)
+    document.querySelector('button[name="minus"]').addEventListener('click', function() {
+      quantityInput.value = parseInt(quantityInput.value) == 1 ? 1 : parseInt(quantityInput.value) - 1
+    })
+    document.querySelector('button[name="plus"]').addEventListener('click', function() {
+      console.log('ok')
+      quantityInput.value = parseInt(quantityInput.value) + 1
+    })
+
+    function isIE() {
+      const ua = window.navigator.userAgent
+      const msie = ua.indexOf('MSIE ')
+      const trident = ua.indexOf('Trident/')
+      return (msie > 0 || trident > 0)
+    }
+
+    if (!isIE()) return
+    const hiddenInput = document.querySelector('#{{ product_form_id }} input[name="id"]')
+    const noScriptInputWrapper = document.createElement('div')
+    const variantSwitcher = document.querySelector('variant-radios[data-section="{{ section.id }}"]') || document.querySelector('variant-selects[data-section="{{ section.id }}"]')
+    noScriptInputWrapper.innerHTML = document.querySelector('.product-form__noscript-wrapper-{{ section.id }}').textContent
+    variantSwitcher.outerHTML = noScriptInputWrapper.outerHTML
+  })
+</script>
+
 <section id="MainProduct-{{ section.id }}" data-section="{{ section.id }}">
   <div class="fixed top-1/2 -translate-y-1/2 right-0">
     <div class="flex flex-col items-center px-[24px] space-y-[32px] text-black text-center">
@@ -31,30 +62,65 @@ html {
       </a>
     </div>
   </div>
+  <nav class="flex flex-none justify-center items-center pt-[56px] space-x-[8px] text-gray-medium">
+    <a href="/">Accueil</a>
+    <span>—</span>
+    <a href="/pages/cave-exclusive">Cave exclusive</a>
+    <span>—</span>
+    <p class="text-black">{{ product.title | escape }}</p>
+  </nav>
   <div class="max-w-content mx-auto pl-[24px] pr-[180px] 3xl:pr-[24px]">
-    <div id="content-description" class="min-h-screen flex flex-col py-[56px]">
-      <nav class="flex flex-none justify-center items-center space-x-[8px] text-gray-medium">
-        <a href="/">Accueil</a>
-        <span>—</span>
-        <a href="#">Cave exclusive</a>
-        <span>—</span>
-        <a href="#" class="text-black">Philtre sauvage</a>
-      </nav>
+    
+    {%- form 'product', product, id: product_form_id, novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+    <input
+      type="hidden"
+      name="id"
+      value="{{ product.selected_or_first_available_variant.id }}"
+      readonly
+    />
+    <input
+      type="hidden"
+      class="field__input"
+      id="url"
+      value="{{ product.selected_variant.url | default: product.url | prepend: request.origin }}"
+      onclick="this.select()"
+      readonly
+    />
+    <div id="content-description" class="min-h-screen flex flex-col pb-[56px]">
       <section class="flex flex-auto items-center justify-between py-[64px]">
         <div class="max-w-[470px] flex-none">
           <h2 class="text-[96px] font-serif">{{ product.title | escape }}</h2>
           <p class="mt-[18px] space-x-[16px] text-black font-medium">
-            <span class="text-[70px]">{{ product.price | money_with_currency }}</span>
+            <span class="text-[70px]">{{ product.price | money }}</span>
             <span class="text-[42px]">(en stock)</span>
           </p>
           <p class="my-[42px] text-[24px] text-gray-dark">{{ product.description | escape }}</p>
           <div class="w-[128px] flex items-center border border-green-light rounded-full font-medium">
-            <button class="w-[40px] h-[40px] flex-none">–</button>
-            <p class="flex-auto text-center">1</p>
-            <button class="w-[40px] h-[40px] flex-none">+</button>
+            <button
+              name="minus"
+              type="button"
+              class="w-[40px] h-[40px] flex-none no-js-hidden"
+            >–</button>
+            <input
+              type="number"
+              name="quantity"
+              id="Quantity-{{ section.id }}"
+              min="1"
+              value="1"
+              form="{{ product_form_id }}"
+              class="quantity__input"
+            />
+            <button
+              name="plus"
+              type="button"
+              class="w-[40px] h-[40px] flex-none no-js-hidden"
+            >+</button>
           </div>
           <div class="flex mt-[28px]">
-            <a href="#" class="px-[32px] py-[12px] bg-red rounded-full text-white">Acheter cette bouteille</a>
+            <button
+              type="submit"
+              class="px-[32px] py-[12px] bg-red rounded-full text-white tracking-wide"
+            >Ajouter cette bouteille</button>
           </div>
         </div>
         <div class="relative max-w-[560px]">
@@ -131,6 +197,8 @@ html {
         </div>
       </section>
     </div>
+    {%- endform -%}
+
     <div id="content-degustation" class="min-h-screen flex items-center">
       <section class="py-[64px]">
         <h3 class="mb-[96px] text-[96px] font-serif">Sa degustation</h3>

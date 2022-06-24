@@ -312,13 +312,13 @@
                     <span id="ShareMessage-{{ section.id }}" class="share-button__message hidden" role="status">
                     </span>
                     <input type="text"
-                          class="field__input"
-                          id="url"
-                          value="{{ product.selected_variant.url | default: product.url | prepend: request.origin }}"
-                          placeholder="{{ 'general.share.share_url' | t }}"
-                          onclick="this.select();"
-                          readonly
-                    >
+                      class="field__input"
+                      id="url"
+                      value="{{ product.selected_variant.url | default: product.url | prepend: request.origin }}"
+                      placeholder="{{ 'general.share.share_url' | t }}"
+                      onclick="this.select()"
+                      readonly
+                    />
                     <label class="field__label" for="url">{{ 'general.share.share_url' | t }}</label>
                   </div>
                   <button class="share-button__close hidden no-js-hidden">
