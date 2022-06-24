@@ -5,7 +5,9 @@
     <h2 class="py-[54px] text-[80px] font-serif">Panier</h2>
     <div class="flex space-x-[96px] mb-[80px]">
       <div class="flex-auto">
-        <table class="w-full table-auto divide-y divide-green-light">
+        
+        {%- if cart != empty -%}
+        <table class="w-full table-auto mb-[56px] divide-y divide-green-light">
           <thead>
             <tr>
               <th class="pr-[24px] py-[10px] text-[16px] text-dark text-left font-light">Produit</th>
@@ -71,7 +73,9 @@
   
           </tbody>
         </table>
-        <h5 class="mt-[56px] mb-[12px] text-black text-[20px] font-medium font-sans">Mon code promo</h5>
+        {%- endif -%}
+
+        <h5 class="mb-[12px] text-black text-[20px] font-medium font-sans">Mon code promo</h5>
         <div class="flex max-w-[354px] bg-green-light/40 rounded-full">
           <input
             type="text"
